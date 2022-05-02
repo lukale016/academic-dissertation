@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Constants\CollectionConstants.cs" />
+    <Compile Include="Constants\TimeConstants.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Data\Repositories\User\Doctor\DoctorRepository.cs" />
+    <Compile Include="Data\Repositories\User\Doctor\IDoctorRepository.cs" />
+    <Compile Include="Data\Repositories\User\IUserRepository.cs" />
+    <Compile Include="Data\Repositories\User\Patient\IPatientRepository.cs" />
+    <Compile Include="Data\Repositories\User\Patient\PatientRepository.cs" />
+    <Compile Include="Data\Repositories\User\UserRepository.cs" />
+    <Compile Include="Data\UnitOfWork.cs" />
+    <Compile Include="Exceptions\ResponseException.cs" />
+    <Compile Include="GlobalUsings.cs" />
+    <Compile Include="Models\Appointment.cs" />
+    <Compile Include="Models\Comment.cs" />
+    <Compile Include="Models\Topic.cs" />
+    <Compile Include="Models\User\Doctor.cs" />
+    <Compile Include="Models\User\Patient.cs" />
+    <Compile Include="Models\User\UserBase.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Records\DtoRecords.cs" />
+    <Compile Include="Services\KeyBuilderAndGenerator\IKeyBuilderAndGeneratorService.cs" />
+    <Compile Include="Services\KeyBuilderAndGenerator\KeyBuilderAndGeneratorService.cs" />
+    <Compile Include="Settings\DbSettings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="6.0.4" />
+    <PackageReference Include="MongoDB.Driver" Version="2.15.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.5.61" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+  </ItemGroup>
+
+</Project>

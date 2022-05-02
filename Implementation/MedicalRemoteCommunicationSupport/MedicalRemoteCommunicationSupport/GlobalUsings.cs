@@ -1,0 +1,5 @@
+﻿global using MedicalRemoteCommunicationSupport.Models;
+global using MedicalRemoteCommunicationSupport.Data;
+global using MedicalRemoteCommunicationSupport.Exceptions;
+global using MedicalRemoteCommunicationSupport.Records;
+global using MedicalRemoteCommunicationSupport.Constants;
