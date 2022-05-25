@@ -1,11 +1,9 @@
 ﻿using StackExchange.Redis;
 
-namespace MedicalRemoteCommunicationSupport.Services.KeyBuilderAndGenerator;
+namespace MedicalRemoteCommunicationSupport.Services;
 
 public class KeyBuilderAndGeneratorService : IKeyBuilderAndGeneratorService
 {
-    private string dateFormat = "dd-MM-yyyy";
-    private DateTime referenceDate = new DateTime(2022, 1, 1);
     private ConnectionMultiplexer redis;
     private ILogger<KeyBuilderAndGeneratorService> logger;
 
@@ -15,35 +13,25 @@ public class KeyBuilderAndGeneratorService : IKeyBuilderAndGeneratorService
         this.logger = logger;
     }
 
-    public string BuildRedisKey(string doctor, DateTime date)
-    {
-        return $"{doctor}_{date.ToString(dateFormat)}";
-    }
-
-    public async Task<int> NextInSequance(string sequanceKey)
+    public async Task<int> NextInSequence(string sequenceKey)
     {
         IDatabase db = redis.GetDatabase();
-        if(db.KeyExists(sequanceKey))
+        if(db.KeyExists(sequenceKey))
         {
             int id;
             try
             {
-                (await db.StringGetAsync(sequanceKey)).TryParse(out id);
+                (await db.StringGetAsync(sequenceKey)).TryParse(out id);
             }
             catch(Exception ex)
             {
                 logger.LogError(ex.Message);
                 throw new ResponseException(500, ex.Message);
             }
-            await db.StringSetAsync(sequanceKey, id + 1);
+            await db.StringSetAsync(sequenceKey, id + 1);
             return id;
         }
-        await db.StringSetAsync(sequanceKey, 1);
+        await db.StringSetAsync(sequenceKey, 1);
         return 1;
-    }
-
-    public long ScoreFromTime(DateTime time)
-    {
-        return referenceDate.Ticks - time.Ticks;
     }
 }

@@ -1,5 +1,5 @@
 ﻿using MedicalRemoteCommunicationSupport.Data.Repositories;
-using MedicalRemoteCommunicationSupport.Services.KeyBuilderAndGenerator;
+using MedicalRemoteCommunicationSupport.Services;
 using MedicalRemoteCommunicationSupport.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -16,8 +16,8 @@ public class UnitOfWork
 
     public UnitOfWork(ILogger<UnitOfWork> logger, IOptions<DbSettings> config)
     {
-        //redis = ConnectionMultiplexer.Connect(config.Value.RedisConnectionUrl);
-        //redis.ErrorMessage += _redis_ErrorMessage;
+        redis = ConnectionMultiplexer.Connect(config.Value.RedisConnectionUrl);
+        redis.ErrorMessage += _redis_ErrorMessage;
         mongo = new MongoClient(config.Value.MongoConnectionUrl);
         mongoDb = mongo.GetDatabase(config.Value.MongoDefaultDb);
         this.logger = logger;
@@ -36,8 +36,12 @@ public class UnitOfWork
     private IKeyBuilderAndGeneratorService keyBuilder;
     private IDoctorRepository doctorRepository;
     private IPatientRepository patientRepository;
+    private ITopicRepostiory topicRepostiory;
+    private ICommentRepository commentRepository;
 
-    public IKeyBuilderAndGeneratorService KeyBuilder { get => keyBuilder ??= new KeyBuilderAndGeneratorService(redis, loggerFactory.CreateLogger<KeyBuilderAndGeneratorService>()); }
-    public IDoctorRepository DoctorRepository { get => doctorRepository ??= new DoctorRepository(mongoDb); }
-    public IPatientRepository PatientRepository { get => patientRepository ??= new PatientRepository(mongoDb); }
+    public IKeyBuilderAndGeneratorService KeyBuilder => keyBuilder ??= new KeyBuilderAndGeneratorService(redis, loggerFactory.CreateLogger<KeyBuilderAndGeneratorService>());
+    public IDoctorRepository DoctorRepository => doctorRepository ??= new DoctorRepository(mongoDb);
+    public IPatientRepository PatientRepository  => patientRepository ??= new PatientRepository(mongoDb, redis);
+    public ITopicRepostiory TopicRepostiory => topicRepostiory ??= new TopicRepository(this, mongoDb, redis, KeyBuilder);
+    public ICommentRepository CommentRepository => commentRepository ??= new CommentRepository(this, redis);
 }

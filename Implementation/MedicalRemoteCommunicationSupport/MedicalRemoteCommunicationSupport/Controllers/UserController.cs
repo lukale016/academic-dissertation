@@ -18,11 +18,11 @@ public class UserController : Controller
     {
         try
         {
-            return (await unitOfWork.PatientRepository.GetUser(username)) as Patient;
+            return new JsonResult((await unitOfWork.PatientRepository.GetUser(username)));
         }
         catch (ResponseException ex)
         {
-            if (ex.Status != StatusCodes.Status404NotFound)
+            if (ex.Status != StatusCodes.Status404NotFound && ex.Status != StatusCodes.Status500InternalServerError)
             {
                 return StatusCode(ex.Status, ex.Message);
             }
@@ -30,7 +30,7 @@ public class UserController : Controller
             try
             {
                 Doctor doctor =  (await unitOfWork.DoctorRepository.GetUser(username));
-                return doctor;
+                return new JsonResult(doctor);
             }
             catch(ResponseException reThrow)
             {
@@ -64,6 +64,47 @@ public class UserController : Controller
         catch (ResponseException reThrow)
         {
             return StatusCode(reThrow.Status, reThrow.Message);
+        }
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<Patient>> UpdatePatient([FromBody]Patient patient)
+    {
+        try
+        {
+            return await unitOfWork.PatientRepository.UpdatePatient(patient);
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
+        }
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<Doctor>> UpdateDoctor([FromBody]Doctor doctor)
+    {
+        try
+        {
+            return await unitOfWork.DoctorRepository.UpdateDoctor(doctor);
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
+        }
+    }
+
+    [HttpDelete("{username}")]
+    public async Task<ActionResult> DeleteUser([FromRoute]string username)
+    {
+        try
+        {
+            // Doctors repository can also be used, since implementation does not differ
+            await unitOfWork.PatientRepository.DeleteUser(username);
+            return Ok("User is successfuly deleted");
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
         }
     }
 }

@@ -6,7 +6,6 @@ namespace MedicalRemoteCommunicationSupport.Models;
 [DataContract]
 [KnownType(typeof(Doctor))]
 [KnownType(typeof(Patient))]
-[BsonIgnoreExtraElements]
 public abstract class UserBase
 {
     [BsonId]
@@ -31,7 +30,15 @@ public abstract class UserBase
     [DataMember]
     public string Gender { get; set; }
 
-    [BsonIgnore]
-    public virtual bool IsDoctor => false;
+    [DataMember]
+    public bool IsDoctor { get; protected set; }
 
+    [BsonIgnore]
+    public List<Appointment> Appointments { get; set; } = new();
+
+    [BsonIgnore]
+    public string MessageListPriorityListKey => $"MessageListPrio:{Username}";
+
+    [BsonIgnore]
+    public List<string> MessageListPriorityList { get; set; } = new();
 }

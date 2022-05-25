@@ -7,9 +7,6 @@ namespace MedicalRemoteCommunicationSupport.Models;
 public class Doctor : UserBase
 {
     [BsonIgnore]
-    public override bool IsDoctor => true;
-    
-    [BsonIgnore]
     public override string FullName => $"Dr. {base.FullName}";
     
     [DataMember]
@@ -20,9 +17,6 @@ public class Doctor : UserBase
 
     [DataMember]
     public string EndTime { get; set; }
-
-    [BsonIgnore]
-    public List<Appointment> Appointments { get; set; }
 
     public Doctor(DoctorPostDto dto)
     {
@@ -35,5 +29,6 @@ public class Doctor : UserBase
         Specialization = dto.Specialization;
         StartTime = TimeConstants.StartTime;
         EndTime = TimeConstants.EndTime;
+        IsDoctor = true;
     }
 }

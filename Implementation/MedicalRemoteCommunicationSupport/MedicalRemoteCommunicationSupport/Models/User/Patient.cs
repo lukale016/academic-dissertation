@@ -4,11 +4,19 @@ using System.Runtime.Serialization;
 namespace MedicalRemoteCommunicationSupport.Models;
 
 [DataContract]
-[BsonIgnoreExtraElements]
 public class Patient : UserBase
 {
     [BsonIgnore]
-    public List<Appointment> Appointments { get; set; }
+    public string FollowedTopicsKey => $"FollowedTopics:{Username}";
+
+    [BsonIgnore]
+    public List<Topic> FollowedTopics { get; set; }
+
+    [BsonIgnore]
+    public string CreatedTopicsKey => $"CreatedTopics:{Username}";
+
+    [BsonIgnore]
+    public List<Topic> CreatedTopics { get; set; }
 
     public Patient(PatientPostDto dto)
     {
@@ -18,5 +26,6 @@ public class Patient : UserBase
         MiddleName = dto.MiddleName;
         Surname = dto.Surname;
         Gender = dto.Gender;
+        IsDoctor = false;
     }
 }

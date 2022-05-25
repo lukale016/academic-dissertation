@@ -3,7 +3,7 @@
 namespace MedicalRemoteCommunicationSupport.Data.Repositories;
 public class UserRepository<T> : IUserRepository<T> where T : UserBase
 {
-    IMongoCollection<T> users;
+    private IMongoCollection<T> users;
     public UserRepository(IMongoDatabase mongoDb)
     {
         users = mongoDb.GetCollection<T>(CollectionConstants.Users);
@@ -58,7 +58,7 @@ public class UserRepository<T> : IUserRepository<T> where T : UserBase
         await users.DeleteOneAsync(filter);
     }
 
-    public async Task<T> GetUser(string username)
+    public virtual async Task<T> GetUser(string username)
     {
         if (string.IsNullOrEmpty(username))
         {
@@ -75,10 +75,12 @@ public class UserRepository<T> : IUserRepository<T> where T : UserBase
         {
             throw new ResponseException(StatusCodes.Status500InternalServerError, ex.Message);
         }
-        if (user is not T)
+
+        if(user is null)
         {
             throw new ResponseException(StatusCodes.Status404NotFound, "User not found");
         }
+        
         return user as T;
     }
 }

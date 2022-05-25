@@ -9,8 +9,15 @@
 
   <ItemGroup>
     <Compile Include="Constants\CollectionConstants.cs" />
+    <Compile Include="Constants\SequenceConstants.cs" />
     <Compile Include="Constants\TimeConstants.cs" />
+    <Compile Include="Controllers\CommentController.cs" />
+    <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Data\Repositories\Comment\CommentRepository.cs" />
+    <Compile Include="Data\Repositories\Comment\ICommentRepository.cs" />
+    <Compile Include="Data\Repositories\Topic\ITopicRepostiory.cs" />
+    <Compile Include="Data\Repositories\Topic\TopicRepository.cs" />
     <Compile Include="Data\Repositories\User\Doctor\DoctorRepository.cs" />
     <Compile Include="Data\Repositories\User\Doctor\IDoctorRepository.cs" />
     <Compile Include="Data\Repositories\User\IUserRepository.cs" />
@@ -22,6 +29,7 @@
     <Compile Include="GlobalUsings.cs" />
     <Compile Include="Models\Appointment.cs" />
     <Compile Include="Models\Comment.cs" />
+    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Topic.cs" />
     <Compile Include="Models\User\Doctor.cs" />
     <Compile Include="Models\User\Patient.cs" />
@@ -30,6 +38,8 @@
     <Compile Include="Records\DtoRecords.cs" />
     <Compile Include="Services\KeyBuilderAndGenerator\IKeyBuilderAndGeneratorService.cs" />
     <Compile Include="Services\KeyBuilderAndGenerator\KeyBuilderAndGeneratorService.cs" />
+    <Compile Include="Services\RedisHelper\IRedisHelperService.cs" />
+    <Compile Include="Services\RedisHelper\RedisHelperService.cs" />
     <Compile Include="Settings\DbSettings.cs" />
   </ItemGroup>
 

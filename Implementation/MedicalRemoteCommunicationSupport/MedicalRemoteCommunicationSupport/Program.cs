@@ -1,3 +1,4 @@
+using MedicalRemoteCommunicationSupport.Services;
 using MedicalRemoteCommunicationSupport.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ builder.Services.AddCors();
 builder.Services.AddSignalRCore();
 // Singletons
 builder.Services.AddSingleton<UnitOfWork>();
+// Transients
+builder.Services.AddTransient<IRedisHelperService, RedisHelperService>();
 
 if (!Directory.Exists("UserData"))
 {
