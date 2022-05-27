@@ -9,11 +9,13 @@
 
   <ItemGroup>
     <Compile Include="Constants\CollectionConstants.cs" />
-    <Compile Include="Constants\SequenceConstants.cs" />
+    <Compile Include="Constants\DirectoryPaths.cs" />
     <Compile Include="Constants\TimeConstants.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Data\Repositories\Appointment\AppointmentRepository.cs" />
+    <Compile Include="Data\Repositories\Appointment\IAppointmentRepository.cs" />
     <Compile Include="Data\Repositories\Comment\CommentRepository.cs" />
     <Compile Include="Data\Repositories\Comment\ICommentRepository.cs" />
     <Compile Include="Data\Repositories\Topic\ITopicRepostiory.cs" />
@@ -35,10 +37,12 @@
     <Compile Include="Models\User\Patient.cs" />
     <Compile Include="Models\User\UserBase.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Records\DataFlowRecords.cs" />
     <Compile Include="Records\DtoRecords.cs" />
-    <Compile Include="Services\KeyBuilderAndGenerator\IKeyBuilderAndGeneratorService.cs" />
-    <Compile Include="Services\KeyBuilderAndGenerator\KeyBuilderAndGeneratorService.cs" />
-    <Compile Include="Services\RedisHelper\IRedisHelperService.cs" />
+    <Compile Include="Services\FileManager\FileManager.cs" />
+    <Compile Include="Services\FileManager\IFileManager.cs" />
+    <Compile Include="Services\KeyBuilderAndGenerator\IKeyGeneratorService.cs" />
+    <Compile Include="Services\KeyBuilderAndGenerator\KeyGeneratorService.cs" />
     <Compile Include="Services\RedisHelper\RedisHelperService.cs" />
     <Compile Include="Settings\DbSettings.cs" />
   </ItemGroup>

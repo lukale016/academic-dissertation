@@ -4,6 +4,7 @@ namespace MedicalRemoteCommunicationSupport.Data.Repositories;
 public class UserRepository<T> : IUserRepository<T> where T : UserBase
 {
     private IMongoCollection<T> users;
+
     public UserRepository(IMongoDatabase mongoDb)
     {
         users = mongoDb.GetCollection<T>(CollectionConstants.Users);
@@ -80,7 +81,7 @@ public class UserRepository<T> : IUserRepository<T> where T : UserBase
         {
             throw new ResponseException(StatusCodes.Status404NotFound, "User not found");
         }
-        
+
         return user as T;
     }
 }

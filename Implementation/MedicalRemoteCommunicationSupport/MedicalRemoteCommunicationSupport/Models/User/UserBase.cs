@@ -20,7 +20,7 @@ public abstract class UserBase
 
     [DataMember]
     public string MiddleName { get; set; }
-    
+
     [DataMember]
     public string Surname { get; set; }
 
@@ -31,8 +31,12 @@ public abstract class UserBase
     public string Gender { get; set; }
 
     [DataMember]
-    public bool IsDoctor { get; protected set; }
+    public DateTime DateOfBirth { get; set; }
 
+    [DataMember]
+    public bool IsDoctor { get; protected set; }
+    [BsonIgnore]
+    public string AppointmentDatesListKey => $"AppointmentDates:{Username}";
     [BsonIgnore]
     public List<Appointment> Appointments { get; set; } = new();
 

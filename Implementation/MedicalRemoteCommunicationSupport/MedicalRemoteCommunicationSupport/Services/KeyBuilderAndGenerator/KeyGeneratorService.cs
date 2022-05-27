@@ -2,20 +2,21 @@
 
 namespace MedicalRemoteCommunicationSupport.Services;
 
-public class KeyBuilderAndGeneratorService : IKeyBuilderAndGeneratorService
+public class KeyGeneratorService : IKeyGeneratorService
 {
     private ConnectionMultiplexer redis;
-    private ILogger<KeyBuilderAndGeneratorService> logger;
+    private ILogger<KeyGeneratorService> logger;
 
-    public KeyBuilderAndGeneratorService(ConnectionMultiplexer redis, ILogger<KeyBuilderAndGeneratorService> logger)
+    public KeyGeneratorService(ConnectionMultiplexer redis, ILogger<KeyGeneratorService> logger)
     {
         this.redis = redis;
         this.logger = logger;
     }
 
-    public async Task<int> NextInSequence(string sequenceKey)
+    public async Task<int> NextInSequence<T>()
     {
         IDatabase db = redis.GetDatabase();
+        string sequenceKey = $"IdGenSequence:{nameof(T)}";
         if(db.KeyExists(sequenceKey))
         {
             int id;

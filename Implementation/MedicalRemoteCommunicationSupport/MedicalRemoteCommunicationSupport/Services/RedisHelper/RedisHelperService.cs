@@ -1,20 +1,20 @@
 ﻿namespace MedicalRemoteCommunicationSupport.Services;
-public class RedisHelperService: IRedisHelperService
+public static class RedisHelperService
 {
-    private string dateFormat = "dd-MM-yyyy";
-    private DateTime referenceDate = new DateTime(2022, 1, 1);
+    private const string dateFormat = "dd.MM.yyyy";
+    private static DateTime referenceDate = new DateTime(2022, 1, 1);
 
-    public string BuildAppointmentKey(string doctor, DateTime date)
+    public static string BuildAppointmentKey(string user, DateTime date)
     {
-        return $"{doctor}_{date.ToString(dateFormat)}";
+        return $"Appointment:{user}_{date.ToString(dateFormat)}";
     }
 
-    public string BuildChatKey(string user1, string user2)
+    public static string BuildChatKey(string user1, string user2)
     {
         throw new NotImplementedException();
     }
 
-    public long ScoreFromTime(DateTime time)
+    public static long ScoreFromTime(DateTime time)
     {
         return referenceDate.Ticks - time.Ticks;
     }

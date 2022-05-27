@@ -9,17 +9,15 @@ public class TopicRepository : ITopicRepostiory
 {
     private IMongoDatabase mongo;
     private IMongoCollection<Topic> topics;
-    private IKeyBuilderAndGeneratorService keyGenerator;
     private IConnectionMultiplexer redis;
     private readonly UnitOfWork unitOfWork;
 
-    public TopicRepository(UnitOfWork unit, IMongoDatabase mongo, IConnectionMultiplexer redis, IKeyBuilderAndGeneratorService keyGenerator)
+    public TopicRepository(UnitOfWork unit, IMongoDatabase mongo, IConnectionMultiplexer redis)
     {
         this.unitOfWork = unit;
         this.mongo = mongo;
         this.redis = redis;
         this.topics = mongo.GetCollection<Topic>(CollectionConstants.Topics);
-        this.keyGenerator = keyGenerator;
     }
 
     public async Task<Topic> AddTopic(Topic topic)
@@ -42,7 +40,7 @@ public class TopicRepository : ITopicRepostiory
             await unitOfWork.DoctorRepository.GetUser(topic.Owner);
         }
 
-        topic.Id = await keyGenerator.NextInSequence(SequenceConstants.TopicKey);
+        topic.Id = await unitOfWork.KeyGenerator.NextInSequence<Topic>();
         await topics.InsertOneAsync(topic);
         return topic;
     }

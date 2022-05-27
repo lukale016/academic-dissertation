@@ -8,7 +8,19 @@ public class Doctor : UserBase
 {
     [BsonIgnore]
     public override string FullName => $"Dr. {base.FullName}";
-    
+
+    [BsonIgnore]
+    public string RequestListKey => $"Requests:{Username}";
+
+    [BsonIgnore]
+    public IEnumerable<string> Requests { get; set; } = new();
+
+    [BsonIgnore]
+    public string PatientListKey => $"Patients:{Username}";
+
+    [BsonIgnore]
+    public IEnumerable<Patient> Patients { get; set; } = new();
+
     [DataMember]
     public string Specialization { get; set; }
 

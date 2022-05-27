@@ -1,4 +1,5 @@
 ﻿using MedicalRemoteCommunicationSupport.Data.Repositories;
+using MedicalRemoteCommunicationSupport.Filtering;
 using MedicalRemoteCommunicationSupport.Services;
 using MedicalRemoteCommunicationSupport.Settings;
 using Microsoft.Extensions.Options;
@@ -33,15 +34,26 @@ public class UnitOfWork
         logger.LogError(e.Message);
     }
 
-    private IKeyBuilderAndGeneratorService keyBuilder;
+    private IKeyGeneratorService keyGenerator;
     private IDoctorRepository doctorRepository;
     private IPatientRepository patientRepository;
     private ITopicRepostiory topicRepostiory;
     private ICommentRepository commentRepository;
 
-    public IKeyBuilderAndGeneratorService KeyBuilder => keyBuilder ??= new KeyBuilderAndGeneratorService(redis, loggerFactory.CreateLogger<KeyBuilderAndGeneratorService>());
-    public IDoctorRepository DoctorRepository => doctorRepository ??= new DoctorRepository(mongoDb);
+    public IKeyGeneratorService KeyGenerator => keyGenerator ??= new KeyGeneratorService(redis, loggerFactory.CreateLogger<KeyGeneratorService>());
+    public IDoctorRepository DoctorRepository => doctorRepository ??= new DoctorRepository(mongoDb, redis);
     public IPatientRepository PatientRepository  => patientRepository ??= new PatientRepository(mongoDb, redis);
-    public ITopicRepostiory TopicRepostiory => topicRepostiory ??= new TopicRepository(this, mongoDb, redis, KeyBuilder);
+    public ITopicRepostiory TopicRepostiory => topicRepostiory ??= new TopicRepository(this, mongoDb, redis);
     public ICommentRepository CommentRepository => commentRepository ??= new CommentRepository(this, redis);
+
+    /// <summary>
+    /// Used for dynamic search
+    /// </summary>
+    /// <typeparam name="T">Mongo model</typeparam>
+    /// <typeparam name="Q">ICreteria<T></typeparam>
+    /// <returns></returns>
+    public IMongoFilter<T, Q> ReturnMongoFiltrator<T, Q>() where Q: ICriteria<T>
+    {
+        return new MongoFilter<T, Q>(mongoDb);
+    }
 }

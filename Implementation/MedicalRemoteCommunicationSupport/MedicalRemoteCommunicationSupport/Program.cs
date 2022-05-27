@@ -17,12 +17,13 @@ builder.Services.AddCors();
 builder.Services.AddSignalRCore();
 // Singletons
 builder.Services.AddSingleton<UnitOfWork>();
+builder.Services.AddSingleton<IFileManager, FileManager>();
 // Transients
 builder.Services.AddTransient<IRedisHelperService, RedisHelperService>();
 
-if (!Directory.Exists("UserData"))
+if (!Directory.Exists(DirectoryPaths.UserData))
 {
-    Directory.CreateDirectory("UserData");
+    Directory.CreateDirectory(DirectoryPaths.UserData);
 }
 
 var app = builder.Build();
