@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MedicalRemoteCommunicationSupport.Filtering;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
@@ -39,6 +40,32 @@ public class UserController : Controller
         }
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients([FromBody]PatientCriteria criteria)
+    {
+        try
+        {
+            return new JsonResult(await unitOfWork.PatientRepository.Search(criteria));
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Doctor>>> SearchDoctors([FromBody]DoctorCriteria criteria)
+    {
+        try
+        {
+            return new JsonResult(await unitOfWork.DoctorRepository.Search(criteria));
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
+        }
+    }
+
     [HttpPost]
     public async Task<ActionResult> AddDoctor([FromBody]DoctorPostDto dto)
     {
@@ -47,9 +74,9 @@ public class UserController : Controller
             await unitOfWork.DoctorRepository.AddUser(new Doctor(dto));
             return Ok("Doctor added");
         }
-        catch (ResponseException reThrow)
+        catch (ResponseException ex)
         {
-            return StatusCode(reThrow.Status, reThrow.Message);
+            return StatusCode(ex.Status, ex.Message);
         }
     }
 
@@ -61,9 +88,9 @@ public class UserController : Controller
             await unitOfWork.PatientRepository.AddUser(new Patient(dto));
             return Ok("Patient added");
         }
-        catch (ResponseException reThrow)
+        catch (ResponseException ex)
         {
-            return StatusCode(reThrow.Status, reThrow.Message);
+            return StatusCode(ex.Status, ex.Message);
         }
     }
 

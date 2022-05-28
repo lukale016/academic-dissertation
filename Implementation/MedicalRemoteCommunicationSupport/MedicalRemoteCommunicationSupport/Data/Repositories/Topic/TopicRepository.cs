@@ -42,6 +42,7 @@ public class TopicRepository : ITopicRepostiory
 
         topic.Id = await unitOfWork.KeyGenerator.NextInSequence<Topic>();
         await topics.InsertOneAsync(topic);
+        await unitOfWork.PatientRepository.RegisterTopicForUser(topic.Owner, topic.Id);
         return topic;
     }
 
@@ -70,6 +71,7 @@ public class TopicRepository : ITopicRepostiory
 
         await redis.GetDatabase().KeyDeleteAsync(topic.CommentsKey);
         await topics.DeleteOneAsync(filter);
+        await unitOfWork.PatientRepository.UnregisterTopicForUser(topic.Owner, topic.Id);
         return id;
     }
 

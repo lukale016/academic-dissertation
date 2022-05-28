@@ -11,7 +11,9 @@
     <Compile Include="Constants\CollectionConstants.cs" />
     <Compile Include="Constants\DirectoryPaths.cs" />
     <Compile Include="Constants\TimeConstants.cs" />
+    <Compile Include="Controllers\AppointmentController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Data\Repositories\Appointment\AppointmentRepository.cs" />
@@ -28,6 +30,11 @@
     <Compile Include="Data\Repositories\User\UserRepository.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
     <Compile Include="Exceptions\ResponseException.cs" />
+    <Compile Include="Filtering\Criterias\Doctor\DoctorCriteria.cs" />
+    <Compile Include="Filtering\Criterias\ICriteria.cs" />
+    <Compile Include="Filtering\Criterias\Patient\PatientCriteria.cs" />
+    <Compile Include="Filtering\Filters\Mongo\IMongoFilter.cs" />
+    <Compile Include="Filtering\Filters\Mongo\MongoFilter.cs" />
     <Compile Include="GlobalUsings.cs" />
     <Compile Include="Models\Appointment.cs" />
     <Compile Include="Models\Comment.cs" />

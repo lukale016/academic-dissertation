@@ -39,12 +39,14 @@ public class UnitOfWork
     private IPatientRepository patientRepository;
     private ITopicRepostiory topicRepostiory;
     private ICommentRepository commentRepository;
+    private IAppointmentRepository appointmentRepository;
 
     public IKeyGeneratorService KeyGenerator => keyGenerator ??= new KeyGeneratorService(redis, loggerFactory.CreateLogger<KeyGeneratorService>());
-    public IDoctorRepository DoctorRepository => doctorRepository ??= new DoctorRepository(mongoDb, redis);
-    public IPatientRepository PatientRepository  => patientRepository ??= new PatientRepository(mongoDb, redis);
+    public IDoctorRepository DoctorRepository => doctorRepository ??= new DoctorRepository(this, mongoDb, redis);
+    public IPatientRepository PatientRepository  => patientRepository ??= new PatientRepository(this, mongoDb, redis);
     public ITopicRepostiory TopicRepostiory => topicRepostiory ??= new TopicRepository(this, mongoDb, redis);
     public ICommentRepository CommentRepository => commentRepository ??= new CommentRepository(this, redis);
+    public IAppointmentRepository AppointmentRepository => appointmentRepository ??= new AppointmentRepository(this, mongoDb, redis);
 
     /// <summary>
     /// Used for dynamic search

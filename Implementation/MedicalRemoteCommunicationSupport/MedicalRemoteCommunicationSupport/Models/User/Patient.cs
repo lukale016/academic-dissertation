@@ -7,12 +7,6 @@ namespace MedicalRemoteCommunicationSupport.Models;
 public class Patient : UserBase
 {
     [BsonIgnore]
-    public string FollowedTopicsKey => $"FollowedTopics:{Username}";
-
-    [BsonIgnore]
-    public List<Topic> FollowedTopics { get; set; }
-
-    [BsonIgnore]
     public string CreatedTopicsKey => $"CreatedTopics:{Username}";
 
     [BsonIgnore]

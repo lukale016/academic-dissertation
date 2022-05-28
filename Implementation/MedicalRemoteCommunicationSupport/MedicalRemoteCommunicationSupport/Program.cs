@@ -18,8 +18,6 @@ builder.Services.AddSignalRCore();
 // Singletons
 builder.Services.AddSingleton<UnitOfWork>();
 builder.Services.AddSingleton<IFileManager, FileManager>();
-// Transients
-builder.Services.AddTransient<IRedisHelperService, RedisHelperService>();
 
 if (!Directory.Exists(DirectoryPaths.UserData))
 {

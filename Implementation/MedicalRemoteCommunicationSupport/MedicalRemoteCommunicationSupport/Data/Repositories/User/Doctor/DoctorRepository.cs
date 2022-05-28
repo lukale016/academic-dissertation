@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MedicalRemoteCommunicationSupport.Filtering;
+using MongoDB.Driver;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -7,9 +8,11 @@ namespace MedicalRemoteCommunicationSupport.Data.Repositories;
 public class DoctorRepository : UserRepository<Doctor>, IDoctorRepository
 {
     private IConnectionMultiplexer redis;
+    private readonly UnitOfWork unitOfWork;
 
-    public DoctorRepository(IMongoDatabase mongoDb, IConnectionMultiplexer redis): base(mongoDb)
+    public DoctorRepository(UnitOfWork unit, IMongoDatabase mongoDb, IConnectionMultiplexer redis): base(mongoDb)
     {
+        this.unitOfWork = unit;
         this.redis = redis;
     }
 
@@ -19,11 +22,14 @@ public class DoctorRepository : UserRepository<Doctor>, IDoctorRepository
 
         IDatabase db = redis.GetDatabase();
         doctor.Requests = (await db.ListRangeAsync(doctor.RequestListKey))
-                                   .Select(rv => rv.ToString());
-        doctor.Patients = (await db.ListRangeAsync(doctor.PatientListKey))
-                                   .Select(rv => );
+                                   .Select(rv => JsonSerializer.Deserialize<RequestDto>(rv.ToString()));
 
         return doctor;
+    }
+
+    public async Task<IEnumerable<Doctor>> Search(DoctorCriteria criteria)
+    {
+        return await unitOfWork.ReturnMongoFiltrator<Doctor, DoctorCriteria>().Search(criteria);
     }
 
     public Task<Doctor> UpdateDoctor(Doctor doctor)

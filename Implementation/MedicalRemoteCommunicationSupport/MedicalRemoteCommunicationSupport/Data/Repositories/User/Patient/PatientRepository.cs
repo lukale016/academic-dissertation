@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MedicalRemoteCommunicationSupport.Filtering;
+using MongoDB.Driver;
 using StackExchange.Redis;
 
 namespace MedicalRemoteCommunicationSupport.Data.Repositories;
@@ -7,11 +8,13 @@ public class PatientRepository : UserRepository<Patient>, IPatientRepository
 {
     private readonly IConnectionMultiplexer redis;
     private IMongoCollection<Topic> topics;
+    private readonly UnitOfWork unitOfWork;
 
-    public PatientRepository(IMongoDatabase mongoDb, IConnectionMultiplexer redis): base(mongoDb)
+    public PatientRepository(UnitOfWork unit, IMongoDatabase mongoDb, IConnectionMultiplexer redis): base(mongoDb)
     {
+        this.unitOfWork = unit;
         this.redis = redis;
-        topics = mongoDb.GetCollection<Topic>(CollectionConstants.Topics);
+        this.topics = mongoDb.GetCollection<Topic>(CollectionConstants.Topics);
     }
 
     public override async Task<Patient> GetUser(string username)
@@ -19,11 +22,6 @@ public class PatientRepository : UserRepository<Patient>, IPatientRepository
         Patient patient = await base.GetUser(username);
 
         IDatabase db = redis.GetDatabase();
-        List<int> followedIds = (await db.ListRangeAsync(patient.FollowedTopicsKey))
-                                    .Select(rv => int.Parse(rv.ToString())).ToList();
-        patient.FollowedTopics = (await topics.FindAsync(Builders<Topic>.Filter.Empty))
-                                        .ToList().Where(t => followedIds.Contains(t.Id)).ToList();
-
         List<int> createdIds = (await db.ListRangeAsync(patient.CreatedTopicsKey))
                                     .Select(rv => int.Parse(rv.ToString())).ToList();
         patient.CreatedTopics = (await topics.FindAsync(Builders<Topic>.Filter.Empty))
@@ -32,8 +30,37 @@ public class PatientRepository : UserRepository<Patient>, IPatientRepository
         return patient;
     }
 
+    public Task<IEnumerable<Patient>> Search(PatientCriteria criteria)
+    {
+        return unitOfWork.ReturnMongoFiltrator<Patient, PatientCriteria>().Search(criteria);
+    }
+
     public Task<Patient> UpdatePatient(Patient patient)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task RegisterTopicForUser(string username, int id)
+    {
+        if(string.IsNullOrWhiteSpace(username) || id <= 0)
+        {
+            throw new ResponseException(StatusCodes.Status400BadRequest, "Parameters not set");
+        }
+
+        Patient patient = await GetUser(username);
+
+        await redis.GetDatabase().ListLeftPushAsync(patient.CreatedTopicsKey, id);
+    }
+
+    public async Task UnregisterTopicForUser(string username, int id)
+    {
+        if (string.IsNullOrWhiteSpace(username) || id <= 0)
+        {
+            throw new ResponseException(StatusCodes.Status400BadRequest, "Parameters not set");
+        }
+
+        Patient patient = await GetUser(username);
+
+        await redis.GetDatabase().ListRemoveAsync(patient.CreatedTopicsKey, id);
     }
 }
