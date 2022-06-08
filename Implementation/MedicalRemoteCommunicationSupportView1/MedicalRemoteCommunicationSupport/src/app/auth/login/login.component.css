@@ -1,0 +1,20 @@
+.flexVertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.fillParent {
+    min-height: 100vh;
+}
+
+.container {
+    min-width: fit-content;
+    min-height: fit-content;
+    max-width: 600px;
+    max-height: 500px;
+}
+
+.centerContent {
+    justify-content: center;
+    align-items: center;
+}
