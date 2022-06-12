@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
-[Route("[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 public class UserController : Controller
 {
     private readonly UnitOfWork unitOfWork;

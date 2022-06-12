@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  serverRoute: "https://localhost:7111/",
+  serverRoute: "https://localhost:7111/api/",
   appName: "MyDoctor"
 };
 

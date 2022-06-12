@@ -17,6 +17,7 @@ builder.Services.AddCors();
 builder.Services.AddSignalRCore();
 // Singletons
 builder.Services.AddSingleton<UnitOfWork>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IFileManager, FileManager>();
 
 if (!Directory.Exists(DirectoryPaths.UserData))

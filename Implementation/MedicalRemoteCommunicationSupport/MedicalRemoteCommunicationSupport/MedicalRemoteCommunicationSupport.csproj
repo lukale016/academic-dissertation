@@ -12,6 +12,7 @@
     <Compile Include="Constants\DirectoryPaths.cs" />
     <Compile Include="Constants\TimeConstants.cs" />
     <Compile Include="Controllers\AppointmentController.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
@@ -46,6 +47,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Records\DataFlowRecords.cs" />
     <Compile Include="Records\DtoRecords.cs" />
+    <Compile Include="Services\Auth\AuthService.cs" />
+    <Compile Include="Services\Auth\IAuthService.cs" />
     <Compile Include="Services\FileManager\FileManager.cs" />
     <Compile Include="Services\FileManager\IFileManager.cs" />
     <Compile Include="Services\KeyBuilderAndGenerator\IKeyGeneratorService.cs" />

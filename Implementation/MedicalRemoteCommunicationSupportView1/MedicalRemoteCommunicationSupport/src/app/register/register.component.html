@@ -1,0 +1,45 @@
+<div class="flexVertical centerContent fillParent">
+    <mat-card class="flexVertical centerContent">
+        <mat-card-title>
+            {{ appName }}
+        </mat-card-title>
+        <mat-form-field>
+            <input matInput required placeholder="Username" [(ngModel)]="data.username" appearance="fill">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput required placeholder="Password" [(ngModel)]="data.password" appearance="fill" type="password" />
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput required placeholder="Email" [(ngModel)]="data.email" appearance="fill" type="email" />
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput required placeholder="Name" [(ngModel)]="data.name" appearance="fill" />
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput required placeholder="Middle name" [(ngModel)]="data.middleName" appearance="fill" />
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput required placeholder="Surname" [(ngModel)]="data.surname" appearance="fill" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Gender</mat-label>
+            <mat-select required [(ngModel)]="data.gender">
+              <mat-option value="male">Male</mat-option>
+              <mat-option value="female">Female</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Choose a date of birth</mat-label>
+            <input matInput [(ngModel)]="data.dateOfBirth" [matDatepicker]="picker">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        <mat-form-field *ngIf="isDoctor">
+            <input matInput required placeholder="Specialization" [(ngModel)]="data.specialization" appearance="fill" />
+        </mat-form-field>
+        <mat-card-footer>Already have an account? <a [routerLink]="'/login'">Login</a></mat-card-footer>
+        <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="register()">Register</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

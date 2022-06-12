@@ -2,7 +2,7 @@
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
-[Route("[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 public class AppointmentController : Controller
 {
     private readonly UnitOfWork unitOfWork;

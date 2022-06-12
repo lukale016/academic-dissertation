@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
-[Route("[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 public class FileController : Controller
 {
     private readonly IFileManager fileManager;

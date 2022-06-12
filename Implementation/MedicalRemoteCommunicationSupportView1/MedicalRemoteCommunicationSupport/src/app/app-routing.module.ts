@@ -2,6 +2,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './home/home/home.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
   {
@@ -9,12 +10,16 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
+    path: "register",
+    component: RegisterComponent
+  },
+  {
     path: "",
     component: HomeComponent
   },
   {
     path: "**",
-    component: HomeComponent
+    redirectTo: ""
   },
 ];
 

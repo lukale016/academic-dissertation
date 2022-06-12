@@ -31,10 +31,12 @@ public class Doctor : UserBase
     {
         Username = dto.Username;
         Password = dto.Password;
+        Email = dto.Email;
         Name = dto.Name;
         MiddleName = dto.MiddleName;
         Surname = dto.Surname;
         Gender = dto.Gender;
+        DateOfBirth = dto.DateOfBirth;
         Specialization = dto.Specialization;
         StartTime = TimeConstants.StartTime;
         EndTime = TimeConstants.EndTime;

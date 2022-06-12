@@ -1,11 +1,17 @@
-<div class="flexVertical container centerContent fillParent">
-    <mat-card class="flexVertical container centerContent">
-            <mat-form-field>
-                <input matInput placeholder="Username" appearance="fill">
-            </mat-form-field>
-            <mat-form-field>
-                <input matInput placeholder="Password" appearance="fill" type="password" />
-            </mat-form-field>
-            <button mat-raised-button color="primary">Primary</button>
+<div class="flexVertical centerContent fillParent">
+    <mat-card class="flexVertical centerContent" appeareance="fill">
+        <mat-card-title>
+            {{ appName }}
+        </mat-card-title>
+        <mat-form-field>
+            <input matInput placeholder="Username" [(ngModel)]="username" appearance="fill">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="Password" [(ngModel)]="password" appearance="fill" type="password" />
+        </mat-form-field>
+        <mat-card-footer>Don't have an account? Register as patient <a [routerLink]="'/register'" [state]="{ isDoc: false}">here</a> or as doctor <a [routerLink]="'/register'" [state]="{ isDoc: true}">here</a>.</mat-card-footer>
+        <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="login()">Login</button>
+        </mat-card-actions>
     </mat-card>
 </div>

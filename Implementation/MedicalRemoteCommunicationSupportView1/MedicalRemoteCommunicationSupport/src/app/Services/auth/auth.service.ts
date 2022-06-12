@@ -8,16 +8,15 @@ import { LoginCreds } from 'src/app/models/LoginCreds';
 })
 export class AuthService {
   private loggedIn: boolean = false;
-  private routeAppend: string = "auth/";
+  private rootRoute: string = environment.serverRoute + "auth/";
 
   constructor(private client: HttpClient ) { }
 
-  logIn(creds: LoginCreds)
-  {
+  login(creds: LoginCreds) : any {
     let headers = new HttpHeaders();
     headers.append("ContentType", "application/json");
     headers.append("Allow", "*");
-    return this.client.post(`${environment.serverRoute}${this.routeAppend}`, creds, {
+    return this.client.post(`${this.rootRoute}login`, creds, {
       headers: headers
     })
   }

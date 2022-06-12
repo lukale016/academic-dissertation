@@ -16,6 +16,9 @@ public abstract class UserBase
     public string Password { get; set; }
 
     [DataMember]
+    public string Email { get; set; }
+
+    [DataMember]
     public string Name { get; set; }
 
     [DataMember]
