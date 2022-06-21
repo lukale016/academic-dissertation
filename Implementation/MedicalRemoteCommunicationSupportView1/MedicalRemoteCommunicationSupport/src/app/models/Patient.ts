@@ -12,7 +12,7 @@ export class Patient {
     dateOfBirth: Date;
     isDoctor: boolean;
     appointments: Appointment[];
-    messageListPriorityList: string[];
+    messageListPriority: string[];
     createdTopics: Topic[];
 
     /**
@@ -32,7 +32,7 @@ export class Patient {
             this.dateOfBirth = new Date();
             this.isDoctor = false;
             this.appointments = [];
-            this.messageListPriorityList = [];
+            this.messageListPriority = [];
             this.createdTopics = [];
             return;
         }
@@ -49,7 +49,7 @@ export class Patient {
             this.dateOfBirth = patient.dateOfBirth;
             this.isDoctor = patient.isDoctor;
             this.appointments = patient.appointments;
-            this.messageListPriorityList = patient.messageListPriorityList;
+            this.messageListPriority = patient.messageListPriority;
             this.createdTopics = patient.createdTopics;
             return;
         }
@@ -65,7 +65,7 @@ export class Patient {
             this.dateOfBirth = args[6] as Date;
             this.isDoctor = false;
             this.appointments = [];
-            this.messageListPriorityList = [];
+            this.messageListPriority = [];
             this.createdTopics = [];
             return;
         }
@@ -80,7 +80,7 @@ export class Patient {
         this.dateOfBirth = new Date();
         this.isDoctor = false;
         this.appointments = [];
-        this.messageListPriorityList = [];
+        this.messageListPriority = [];
         this.createdTopics = [];
     }
 }

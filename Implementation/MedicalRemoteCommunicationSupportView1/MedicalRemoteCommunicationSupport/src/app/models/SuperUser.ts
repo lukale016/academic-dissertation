@@ -1,6 +1,9 @@
 import { Appointment } from './Appointment';
+import { Doctor } from 'src/app/models/Doctor';
 import { Patient } from './Patient';
-export class Doctor {
+import { Topic } from './Topic';
+
+export class SuperUser {
     username: string;
     password: string;
     name: string;
@@ -10,20 +13,18 @@ export class Doctor {
     dateOfBirth: Date;
     isDoctor: boolean;
     appointments: Appointment[];
-    messageListPriority: string[];
     fullName: string;
     requests: Request[];
     patients: Patient[];
     specialization: string;
     startTime: string;
     endTime: string;
+    messageListPriority: string[];
+    createdTopics: Topic[];
 
-    /**
-     * @summary One arg copy ctor
-     * @summary 10 arg: username, password, name, middle, surname, gender, birth, specialization, start time, end time
-     */
-    constructor(...args: any[]) {
-        if(args.length == 0)
+    constructor(user: Patient | Doctor | null)
+    {
+        if(user === null)
         {
             this.username = "";
             this.password = ""
@@ -41,11 +42,32 @@ export class Doctor {
             this.specialization = "";
             this.startTime = "";
             this.endTime = "";
+            this.createdTopics = [];
             return;
         }
-        if(args.length == 1)
-        {
-            let doctor : Doctor = args[0] as Doctor;
+        if(!user.isDoctor && user.username != "") {
+            let patient : Patient = user as Patient;
+            this.username = patient.username;
+            this.password = patient.password;
+            this.name = patient.name;
+            this.middleName = patient.middleName;
+            this.surname = patient.surname;
+            this.fullName = patient.fullName;
+            this.gender = patient.gender;
+            this.dateOfBirth = patient.dateOfBirth;
+            this.isDoctor = patient.isDoctor;
+            this.appointments = patient.appointments;
+            this.messageListPriority = patient.messageListPriority;
+            this.createdTopics = patient.createdTopics;
+            this.requests = [];
+            this.patients = [];
+            this.specialization = "";
+            this.startTime = "";
+            this.endTime = "";
+            return;
+        }
+        else if(user.isDoctor) {
+            let doctor : Doctor = user as Doctor;
             this.username = doctor.username;
             this.password = doctor.password;
             this.name = doctor.name;
@@ -62,29 +84,11 @@ export class Doctor {
             this.specialization = doctor.specialization;
             this.startTime = doctor.startTime;
             this.endTime = doctor.endTime;
+            this.messageListPriority = doctor.messageListPriority;
+            this.createdTopics = [];
             return;
         }
-        if(args.length == 11)
-        {
-            this.username = args[0] as string;
-            this.password = args[1] as string
-            this.name = args[2] as string;
-            this.middleName = args[3] as string;
-            this.surname = args[4] as string;
-            this.fullName = "";
-            this.gender = args[5] as string;
-            this.dateOfBirth = args[6] as Date;
-            this.isDoctor = true;
-            this.appointments = [];
-            this.messageListPriority = [];
-            this.requests = [];
-            this.patients = [];
-            this.specialization = args[7] as string;
-            this.startTime = args[8] as string;
-            this.endTime = args[9] as string;
-            return;
-        }
-        console.log("Something went wrong in doctor ctor");
+        console.log("Something went wrong in super user ctor");
         this.username = "";
         this.password = ""
         this.name = "";
@@ -101,5 +105,6 @@ export class Doctor {
         this.specialization = "";
         this.startTime = "";
         this.endTime = "";
+        this.createdTopics = [];
     }
 }

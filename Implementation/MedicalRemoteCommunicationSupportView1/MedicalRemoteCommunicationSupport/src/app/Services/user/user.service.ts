@@ -1,3 +1,4 @@
+import { SuperUser } from './../../models/SuperUser';
 import { Router } from '@angular/router';
 import { PatientPostDto } from './../../Dtos/PatientPostDto';
 import { DoctroPostDto } from './../../Dtos/DoctorPostDto';
@@ -15,14 +16,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class UserService implements OnDestroy {
-  private doctor: BehaviorSubject<Doctor> = new BehaviorSubject<Doctor>(new Doctor());
-  public $doctor: Observable<Doctor> = this.doctor.asObservable();
-  private patient: BehaviorSubject<Patient> = new BehaviorSubject<Patient>(new Patient());
-  public $patient: Observable<Patient> = this.patient.asObservable();
+  private user: BehaviorSubject<SuperUser> = new BehaviorSubject<SuperUser>(new SuperUser(null));
+  public $user: Observable<SuperUser> = this.user.asObservable();
   private isDoctor: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public $isDoctor: Observable<boolean> = this.isDoctor.asObservable();
-  private isLogedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public $isLogedIn: Observable<boolean> = this.isDoctor.asObservable();
   private $destroy: Subject<void> = new Subject<void>();
 
   private rootRoute: string = environment.serverRoute + "user/"
@@ -38,14 +35,12 @@ export class UserService implements OnDestroy {
   {
     this.authService.login(creds).pipe(takeUntil(this.$destroy)).subscribe((data : any) => {
       if(data.isDoctor) {
-        this.doctor.next(data as Doctor);
+        this.user.next(new SuperUser(data as Doctor));
         this.isDoctor.next(true);
-        this.isLogedIn.next(true);
       }
       else {
-        this.patient.next(data as Patient);
+        this.user.next(new SuperUser(data as Patient));
         this.isDoctor.next(false);
-        this.isLogedIn.next(true);
       }
       this.router.navigate([""]);
     },

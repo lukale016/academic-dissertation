@@ -20,10 +20,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
-    this.userService.$isLogedIn.pipe(takeUntil(this.$destroy)).subscribe((value: boolean) => {
-      if(value)
-        this.router.navigate([""]);
-    });
   }
 
   login() {
