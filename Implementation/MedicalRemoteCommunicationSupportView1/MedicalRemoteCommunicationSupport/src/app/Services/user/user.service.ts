@@ -16,8 +16,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class UserService implements OnDestroy {
-  private user: BehaviorSubject<SuperUser> = new BehaviorSubject<SuperUser>(new SuperUser(null));
-  public $user: Observable<SuperUser> = this.user.asObservable();
+  private user: BehaviorSubject<SuperUser | undefined> = new BehaviorSubject<SuperUser | undefined>(undefined);
+  public $user: Observable<SuperUser | undefined> = this.user.asObservable();
   private isDoctor: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public $isDoctor: Observable<boolean> = this.isDoctor.asObservable();
   private $destroy: Subject<void> = new Subject<void>();
@@ -37,6 +37,10 @@ export class UserService implements OnDestroy {
       if(data.isDoctor) {
         this.user.next(new SuperUser(data as Doctor));
         this.isDoctor.next(true);
+      }
+      else if(data.isDoctor == undefined)
+      {
+        this.user.next(undefined);
       }
       else {
         this.user.next(new SuperUser(data as Patient));

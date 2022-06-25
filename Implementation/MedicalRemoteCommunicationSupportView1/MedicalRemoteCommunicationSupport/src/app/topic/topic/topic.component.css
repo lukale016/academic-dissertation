@@ -1,0 +1,18 @@
+.toolbar {
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.flexVertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.centerContent {
+    justify-content: center;
+}
+
+.pointer {
+    cursor: pointer;
+}

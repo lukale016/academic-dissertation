@@ -1,0 +1,43 @@
+
+.fillParent {
+    width: 100%;
+    height: 100%;
+}
+
+.flexVertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex {
+    display: flex;
+}
+
+.centerContent {
+    justify-content: center;
+    align-items: center;
+}
+
+.fillParentWidth {
+    width: 100%;
+}
+
+.chat {
+    border: 2px solid gainsboro;
+    border-radius: 5px;
+    width: 100%;
+    height: 300px;
+}
+
+.selfAlignEnd {
+    align-self: flex-end;
+}
+
+.message {
+    margin: 10px;
+    padding: 10px;
+    color: whitesmoke;
+    background-color: #3f51b5;
+    width: fit-content;
+    border-radius: 20px;
+}

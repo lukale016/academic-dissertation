@@ -1,1 +1,92 @@
-<p *ngIf="user && user.username != ''">Welcome {{user.fullName}}</p>
+<mat-drawer-container class="fillParent" autosize>
+  <mat-drawer class="sidenav" opened mode="side">
+    <div class="flexVertical">
+      <h2 *ngIf="user">{{ user.fullName }}</h2>
+      <h2 *ngIf="!user">Menu</h2>
+      <mat-divider></mat-divider>
+      <mat-action-list *ngIf="!user">
+        <mat-list-item routerLink="login">Login</mat-list-item>
+        <mat-list-item routerLink="register" [state]="{ isDoc: 0 }"
+          >Register as patient</mat-list-item
+        >
+        <mat-list-item routerLink="register" [state]="{ isDoc: 1 }"
+          >Register as doctor</mat-list-item
+        >
+      </mat-action-list>
+    </div>
+  </mat-drawer>
+  <p class="toolbar">
+    <mat-toolbar class="flexSpaced" color="primary">
+      <span>{{ appName }}</span>
+      <button
+        mat-icon-button
+        (click)="chatContainer.toggle()"
+        aria-label="icon-button with add icon"
+      >
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+    </mat-toolbar>
+  </p>
+  <main class="flexVertical centerContent fillParent">
+    <form class="flexSpaced actions centerContent">
+      <div>
+        <mat-form-field>
+          <mat-label>Search</mat-label>
+          <input
+            type="text"
+            name="TopicSearch"
+            aria-label="Search topics"
+            matInput
+            [formControl]="searchValue"
+            [matAutocomplete]="auto"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              *ngFor="let option of autocompleteOptions"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <button
+          mat-icon-button
+          aria-label="Example icon button with a vertical three dot icon"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+      <div>
+        <button mat-raised-button color="primary" (click)="openAddTopicDialog()">Add topic</button>
+      </div>
+    </form>
+    <div class="flexVertical fillParent topicItem">
+      <mat-action-list>
+        <mat-list-item *ngFor="let topic of topicSlice">
+          <div class="flexSpaced fillParent centerContent">
+            {{ topic.title }}
+            <div class="flex centerContent">
+              <mat-icon color="primary">comment</mat-icon
+              >{{ topic.comments ? topic.comments.length : 0 }}
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-action-list>
+      <mat-paginator
+        id="topicPages"
+        class="noGrow"
+        [length]="topics.length"
+        pageSize="10"
+        aria-label="Page select for topics"
+      ></mat-paginator>
+    </div>
+  </main>
+  <mat-drawer #chatContainer class="chatPanel" mode="side" position="end">
+    <div class="flexVertical">
+      <h2>Chat</h2>
+      <mat-accordion class="fillParent" multi>
+        <app-chat></app-chat><!--Add input atribute-->
+      </mat-accordion>
+    </div>
+  </mat-drawer>
+</mat-drawer-container>

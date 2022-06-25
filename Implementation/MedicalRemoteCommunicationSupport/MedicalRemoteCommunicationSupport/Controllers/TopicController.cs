@@ -25,8 +25,8 @@ public class TopicController : Controller
         }
     }
 
-    [HttpGet]
-    public async Task<ActionResult<Topic>> GetTopic(int id)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Topic>> GetTopic([FromRoute]int id)
     {
         try
         {
@@ -39,12 +39,11 @@ public class TopicController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddTopic([FromBody]Topic topic)
+    public async Task<ActionResult<Topic>> AddTopic([FromBody]Topic topic)
     {
         try
         {
-            await unitOfWork.TopicRepostiory.AddTopic(topic);
-            return Ok("Topic added");
+            return await unitOfWork.TopicRepostiory.AddTopic(topic);
         }
         catch (ResponseException ex)
         {

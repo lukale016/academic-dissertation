@@ -77,7 +77,7 @@ public class TopicRepository : ITopicRepostiory
 
     public async Task<IEnumerable<Topic>> GetAllTopics()
     {
-        return (await topics.FindAsync(Builders<Topic>.Filter.Empty)).ToList();
+        return (await topics.FindAsync(Builders<Topic>.Filter.Empty)).ToList().Reverse<Topic>();
     }
 
     public async Task<Topic> GetTopic(int id)

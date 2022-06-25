@@ -1,3 +1,4 @@
+import { TopicComponent } from './topic/topic/topic.component';
 import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './home/home/home.component';
 import { NgModule } from '@angular/core';
@@ -12,6 +13,14 @@ const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent
+  },
+  {
+    path: "topic",
+    component: TopicComponent
+  }, //delete this route
+  {
+    path: "topic/:id",
+    component: TopicComponent
   },
   {
     path: "",
