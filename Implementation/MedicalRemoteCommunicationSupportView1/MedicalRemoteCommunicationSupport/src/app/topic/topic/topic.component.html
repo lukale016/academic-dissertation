@@ -3,6 +3,36 @@
       <span class="pointer" routerLink="">{{ appName }}</span>
     </mat-toolbar>
 </p>
-<div class="flexVertical">
-    <p>a</p>
+<div class="flexVertical centerContent">
+  <mat-card class="standardComponent">
+    <mat-card-title-group>
+      <mat-card-title matTooltip="Verified user" matTooltipPosition="right">{{ topic?.title }}</mat-card-title>
+    </mat-card-title-group>
+    <mat-card-content>
+      <mat-divider></mat-divider>
+      <p>
+        {{ topic?.description }}
+      </p>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="standardComponent" *ngIf="user">
+    <mat-card-header>
+      <mat-card-title>Add comment</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field class="flexVertical" appearance="fill">
+        <textarea matInput class="addComment" [(ngModel)]="comment.description"></textarea>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="addComment()">Add comment</button>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="standardComponent" *ngFor="let comment of topic?.comments">
+    <mat-card-header>
+      <mat-card-title matBadgeOverlap="false" matBadgeSize="small" matBadge="✓" matTooltip="Verified user" matTooltipPosition="right" *ngIf="comment.isDoctorComment">{{ comment.userFullName }}</mat-card-title>
+      <mat-card-title *ngIf="!comment.isDoctorComment">{{ comment.userFullName }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="commentContent">
+      {{ comment.description }}
+    </mat-card-content>
+  </mat-card>
 </div>

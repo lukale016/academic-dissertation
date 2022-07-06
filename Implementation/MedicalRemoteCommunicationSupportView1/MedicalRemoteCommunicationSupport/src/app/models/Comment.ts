@@ -1,5 +1,6 @@
 export class Comment {
     owner: string;
+    userFullName: string;
     description: string;
     isDoctorComment: boolean;
 
@@ -11,6 +12,7 @@ export class Comment {
         if(args.length == 0)
         {
             this.owner = "";
+            this.userFullName = "";
             this.description = "";
             this.isDoctorComment = false;
             return;
@@ -19,6 +21,7 @@ export class Comment {
         {
             let comment : Comment = args[0] as Comment;
             this.owner = comment.owner;
+            this.userFullName = comment.userFullName;
             this.description = comment.description;
             this.isDoctorComment = comment.isDoctorComment;
             return;
@@ -26,12 +29,14 @@ export class Comment {
         if(args.length == 3)
         {
             this.owner = args[0] as string;
+            this.userFullName = "";
             this.description = args[1] as string;
             this.isDoctorComment = args[2] as boolean;
             return;
         }
         console.log("Something went wrong in comment ctor");
         this.owner = "";
+        this.userFullName = "";
         this.description = "";
         this.isDoctorComment = false;
     }

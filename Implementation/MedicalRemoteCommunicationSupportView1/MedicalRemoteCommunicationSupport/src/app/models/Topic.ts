@@ -1,3 +1,4 @@
+import { Comment } from './Comment';
 export class Topic {
     id: number;
     title: string;

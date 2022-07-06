@@ -21,6 +21,8 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './register/register.component';
@@ -60,6 +62,8 @@ import { AddTopicDialogComponent } from './home/add-topic-dialog/add-topic-dialo
     MatFormFieldModule,
     MatExpansionModule,
     MatDialogModule,
+    MatBadgeModule,
+    MatTooltipModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,

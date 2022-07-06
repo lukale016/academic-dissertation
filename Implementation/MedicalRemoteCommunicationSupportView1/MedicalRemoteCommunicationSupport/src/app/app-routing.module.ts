@@ -15,10 +15,6 @@ const routes: Routes = [
     component: RegisterComponent
   },
   {
-    path: "topic",
-    component: TopicComponent
-  }, //delete this route
-  {
     path: "topic/:id",
     component: TopicComponent
   },

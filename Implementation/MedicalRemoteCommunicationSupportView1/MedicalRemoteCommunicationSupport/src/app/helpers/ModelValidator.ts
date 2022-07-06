@@ -4,7 +4,7 @@ export class ModelValidator {
             let result: boolean = true;
             properties.forEach(prop => {
                 if(ignoredProperties.indexOf(prop) === -1)
-                    if(typeof instance[prop] === "string" && instance[prop] === "") 
+                    if(!this.isUsed(prop))
                         result = false;
             });
             return result;

@@ -20,14 +20,21 @@ public class CommentRepository : ICommentRepository
             throw new ResponseException(StatusCodes.Status400BadRequest, "Parameters not set");
         }
         
+        UserBase user = null;
         if(comment.IsDoctorComment)
         {
-            await unitOfWork.DoctorRepository.GetUser(comment.Owner);
+            user = await unitOfWork.DoctorRepository.GetUser(comment.Owner);
         }
         else
         {
-            await unitOfWork.PatientRepository.GetUser(comment.Owner);
+            user = await unitOfWork.PatientRepository.GetUser(comment.Owner);
         }
+        if(user is null)
+        {
+            throw new ResponseException(StatusCodes.Status404NotFound, "User not found");
+        }
+
+        comment.UserFullName = user.FullName;
 
         Topic topic = await unitOfWork.TopicRepostiory.GetTopic(id);
 

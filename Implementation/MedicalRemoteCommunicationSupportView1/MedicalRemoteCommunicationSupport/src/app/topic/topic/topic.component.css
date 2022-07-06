@@ -10,9 +10,41 @@
 }
 
 .centerContent {
-    justify-content: center;
+    align-items: center;
 }
 
 .pointer {
     cursor: pointer;
+}
+
+.standardComponent {
+    width: 70%;
+    margin: 10px;
+}
+
+.commentContent {
+    border: 2px gainsboro solid;
+    border-radius: 5px;
+    height: 80px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    word-wrap: break-word;
+    overflow-y: auto;
+}
+
+mat-divider {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.iconBadge {
+    font-family: Material icons;
+}
+
+.addComment {
+    resize: none;
+    overflow-y: auto;
+    word-wrap: break-word;
+    min-height: 80px;
 }

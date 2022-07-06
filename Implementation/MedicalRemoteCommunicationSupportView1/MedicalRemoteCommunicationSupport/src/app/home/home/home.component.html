@@ -62,7 +62,7 @@
     </form>
     <div class="flexVertical fillParent topicItem">
       <mat-action-list>
-        <mat-list-item *ngFor="let topic of topicSlice">
+        <mat-list-item *ngFor="let topic of topicSlice" [routerLink]="['topic', topic.id]">
           <div class="flexSpaced fillParent centerContent">
             {{ topic.title }}
             <div class="flex centerContent">

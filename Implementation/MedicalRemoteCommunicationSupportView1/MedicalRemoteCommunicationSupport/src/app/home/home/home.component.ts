@@ -1,3 +1,5 @@
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { ModelValidator } from './../../helpers/ModelValidator';
 import { AddTopicDialogComponent } from './../add-topic-dialog/add-topic-dialog.component';
 import { environment } from './../../../environments/environment';
 import { Topic } from './../../models/Topic';
@@ -27,7 +29,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatPaginator) topicPages!: MatPaginator
 
-  constructor(private userService: UserService, private topicService: TopicService, private dialog: MatDialog) { }
+  constructor(
+    private userService: UserService, 
+    private topicService: TopicService, 
+    private dialog: MatDialog,
+    private snack: MatSnackBar
+    ) { }
 
   ngOnInit(): void {
     this.userService.$isDoctor.pipe(takeUntil(this.$destroy))
@@ -77,7 +84,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     dialogRef.afterClosed().pipe(first()).subscribe((topic: Topic) =>{
-      console.log(topic);
+      if(!ModelValidator.validate(topic))
+      {
+        this.snack.open("Fill all fields", "close", { duration: 2000 }); 
+        return;
+      }
+      this.topicService.addTopic(topic).pipe(takeUntil(this.$destroy))
+                       .subscribe((newTopic: Topic) => {
+                          this.snack.open("Added new topic", "close", { duration: 2000 }); 
+                          this.topics.unshift(newTopic);
+                          this._filterTopics(this.searchValue.value);
+                       });
     });
   }
 

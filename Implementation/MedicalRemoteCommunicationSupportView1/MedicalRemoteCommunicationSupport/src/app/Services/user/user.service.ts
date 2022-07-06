@@ -33,23 +33,26 @@ export class UserService implements OnDestroy {
 
   loadUser(creds: LoginCreds)
   {
-    this.authService.login(creds).pipe(takeUntil(this.$destroy)).subscribe((data : any) => {
-      if(data.isDoctor) {
-        this.user.next(new SuperUser(data as Doctor));
-        this.isDoctor.next(true);
+    this.authService.login(creds).pipe(takeUntil(this.$destroy))
+      .subscribe({
+      next: (data : any) => {
+        if(data.isDoctor) {
+          this.user.next(new SuperUser(data as Doctor));
+          this.isDoctor.next(true);
+        }
+        else if(data.isDoctor == undefined)
+        {
+          this.user.next(undefined);
+        }
+        else {
+          this.user.next(new SuperUser(data as Patient));
+          this.isDoctor.next(false);
+        }
+        this.router.navigate([""]);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.snack.open(error.error, "close", { duration: 2000 })
       }
-      else if(data.isDoctor == undefined)
-      {
-        this.user.next(undefined);
-      }
-      else {
-        this.user.next(new SuperUser(data as Patient));
-        this.isDoctor.next(false);
-      }
-      this.router.navigate([""]);
-    },
-    (error: HttpErrorResponse) => {
-      this.snack.open(error.error, "close", { duration: 2000 })
     });
   }
 
@@ -57,26 +60,28 @@ export class UserService implements OnDestroy {
     if(data instanceof PatientPostDto) {
       this.client.post<string>(`${this.rootRoute}AddPatient`, data as PatientPostDto, { headers: this.getDefaultHeaders() })
         .pipe(takeUntil(this.$destroy))
-        .subscribe(data => { 
-          this.snack.open(data, "close", { duration: 2000 }); 
-          this.router.navigate(['login']);
-        }, 
-          (error: HttpErrorResponse) => { 
+        .subscribe({
+          next: data => { 
+            this.snack.open(data, "close", { duration: 2000 }); 
+            this.router.navigate(['login']);
+          }, 
+          error: (error: HttpErrorResponse) => { 
             this.snack.open(error.error, "close", { duration: 2000 });
           }
-        );
+      });
     }
     else {
       this.client.post<string>(`${this.rootRoute}AddDoctor`, data as DoctroPostDto, { headers: this.getDefaultHeaders()})
         .pipe(takeUntil(this.$destroy))
-        .subscribe(data => { 
-          this.snack.open(data, "close", { duration: 2000 });
-          this.router.navigate(['login']);
-        }, 
-          (error: HttpErrorResponse) => { 
+        .subscribe({
+          next: data => { 
+            this.snack.open(data, "close", { duration: 2000 });
+            this.router.navigate(['login']);
+          }, 
+          error: (error: HttpErrorResponse) => { 
             this.snack.open(error.error, "close", { duration: 2000 }); 
           }
-        );
+      });
     }
   }
 

@@ -21,7 +21,7 @@ export class TopicService {
   }
 
   addTopic(topic: Topic) {
-    return this.client.post(`${this.rootRoute}AddTopic`, topic, { headers: this.getDefaultHeaders(), responseType: "text" });
+    return this.client.post<Topic>(`${this.rootRoute}AddTopic`, topic, { headers: this.getDefaultHeaders() });
   }
 
   deleteTopic(id: number) {
