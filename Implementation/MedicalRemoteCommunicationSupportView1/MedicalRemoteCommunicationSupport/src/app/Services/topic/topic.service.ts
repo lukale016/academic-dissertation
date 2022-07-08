@@ -1,3 +1,4 @@
+import { tokenKey } from './../../constants/localStorageConsts';
 import { Topic } from './../../models/Topic';
 import { Observable } from 'rxjs';
 import { environment } from './../../../environments/environment';
@@ -30,8 +31,11 @@ export class TopicService {
 
   private getDefaultHeaders() : HttpHeaders {
     let headers = new HttpHeaders();
-    headers.append("ContentType", "application/json");
-    headers.append("Allow", "*");
+    headers = headers.append("ContentType", "application/json")
+                     .append("Allow", "*");
+    const token: string | null = localStorage.getItem(tokenKey);
+    if(token)
+      headers = headers.append("Authorization", `Bearer ${token}`)
     return headers;
   }
 }

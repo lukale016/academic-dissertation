@@ -1,19 +1,27 @@
-﻿namespace MedicalRemoteCommunicationSupport.Services;
+﻿using Ardalis.GuardClauses;
+using MedicalRemoteCommunicationSupport.Settings;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace MedicalRemoteCommunicationSupport.Services;
 
 public class AuthService : IAuthService
 {
     private readonly UnitOfWork unitOfWork;
-    public AuthService(UnitOfWork unit)
+    private readonly IOptions<JwtSettings> jwtConfig;
+    public AuthService(UnitOfWork unit, IOptions<JwtSettings> jwtSettings)
     {
         unitOfWork = unit;
+        this.jwtConfig = jwtSettings;
     }
 
-    public async Task<object> LogIn(Credentials creds)
+    public async Task<UserAndToken> Login(Credentials creds)
     {
-        if(string.IsNullOrEmpty(creds.Username) || string.IsNullOrEmpty(creds.Password))
-        {
-            throw new ResponseException(StatusCodes.Status400BadRequest, "Parameters not set");
-        }
+        Guard.Against.NullOrWhiteSpace(creds.Username);
+        Guard.Against.NullOrWhiteSpace(creds.Password);
 
         try
         {
@@ -24,7 +32,7 @@ public class AuthService : IAuthService
                 throw new ResponseException(StatusCodes.Status401Unauthorized, "Passwords do not match");
             }
 
-            return patient;
+            return new UserAndToken(patient, BuildToken(patient));
         }
         catch(ResponseException ex)
         {
@@ -37,7 +45,7 @@ public class AuthService : IAuthService
                     throw new ResponseException(StatusCodes.Status401Unauthorized, "Passwords do not match");
                 }
 
-                return doctor;
+                return new UserAndToken(doctor, BuildToken(doctor));
             }
             else
             {
@@ -46,5 +54,25 @@ public class AuthService : IAuthService
         }
 
         return null;
+    }
+
+    private string BuildToken(UserBase user)
+    {
+        Guard.Against.Null(user, "No user to build token for");
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Username),
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Value.SigningKey));
+        var signingCreds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(jwtConfig.Value.Issuer, 
+            jwtConfig.Value.Audiance, 
+            claims, 
+            expires: DateTime.Now.AddHours(2), 
+            signingCredentials: signingCreds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

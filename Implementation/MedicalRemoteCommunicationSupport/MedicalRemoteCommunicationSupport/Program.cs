@@ -1,5 +1,10 @@
 using MedicalRemoteCommunicationSupport.Services;
 using MedicalRemoteCommunicationSupport.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
+using StackExchange.Redis;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer()
+                .AddSwaggerGen();
 // Configuration
-builder.Services.Configure<DbSettings>(builder.Configuration.GetSection("DbSettings"));
+var dbSettings = builder.Configuration.GetSection("DbSettings");
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+builder.Services.Configure<DbSettings>(dbSettings);
+builder.Services.Configure<JwtSettings>(jwtSettings);
 // CORS
 builder.Services.AddCors();
 // SignalR
@@ -19,6 +27,23 @@ builder.Services.AddSignalRCore();
 builder.Services.AddSingleton<UnitOfWork>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IFileManager, FileManager>();
+builder.Services.AddSingleton<ConnectionMultiplexer>(ConnectionMultiplexer.Connect(dbSettings["RedisConnectionUrl"]));
+builder.Services.AddSingleton<MongoClient>(new MongoClient(dbSettings["MongoConnectionUrl"]));
+// Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audiance"],
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SigningKey"]))
+    };
+});
 
 if (!Directory.Exists(DirectoryPaths.UserData))
 {
@@ -42,6 +67,8 @@ app.UseCors(options =>
            .AllowAnyMethod()
            .AllowAnyOrigin();
 });
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

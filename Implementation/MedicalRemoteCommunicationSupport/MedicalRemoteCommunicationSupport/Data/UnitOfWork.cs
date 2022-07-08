@@ -15,12 +15,15 @@ public class UnitOfWork
     private IMongoDatabase mongoDb;
     private ILoggerFactory loggerFactory;
 
-    public UnitOfWork(ILogger<UnitOfWork> logger, IOptions<DbSettings> config)
+    public UnitOfWork(ConnectionMultiplexer redis, 
+        MongoClient mongo, 
+        ILogger<UnitOfWork> logger, 
+        IOptions<DbSettings> dbConfig)
     {
-        redis = ConnectionMultiplexer.Connect(config.Value.RedisConnectionUrl);
+        this.redis = redis;
         redis.ErrorMessage += _redis_ErrorMessage;
-        mongo = new MongoClient(config.Value.MongoConnectionUrl);
-        mongoDb = mongo.GetDatabase(config.Value.MongoDefaultDb);
+        this.mongo = mongo;
+        mongoDb = mongo.GetDatabase(dbConfig.Value.MongoDefaultDb);
         this.logger = logger;
         loggerFactory = LoggerFactory.Create(builder =>
         {

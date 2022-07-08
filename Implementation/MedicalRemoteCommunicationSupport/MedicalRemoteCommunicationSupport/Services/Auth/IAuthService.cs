@@ -2,5 +2,5 @@
 
 public interface IAuthService
 {
-    Task<object> LogIn(Credentials creds);
+    Task<UserAndToken> Login(Credentials creds);
 }

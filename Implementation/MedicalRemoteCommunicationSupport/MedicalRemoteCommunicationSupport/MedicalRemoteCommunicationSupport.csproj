@@ -55,15 +55,18 @@
     <Compile Include="Services\KeyBuilderAndGenerator\KeyGeneratorService.cs" />
     <Compile Include="Services\RedisHelper\RedisHelperService.cs" />
     <Compile Include="Settings\DbSettings.cs" />
+    <Compile Include="Settings\JwtSettings.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="6.0.4" />
     <PackageReference Include="MongoDB.Driver" Version="2.15.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.5.61" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
   </ItemGroup>
 
 </Project>

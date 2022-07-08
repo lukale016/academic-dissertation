@@ -1,3 +1,4 @@
+import { tokenKey } from './../../constants/localStorageConsts';
 import { Observable } from 'rxjs';
 import { Comment } from './../../models/Comment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -22,8 +23,11 @@ export class CommentService {
 
   private getDefaultHeaders() : HttpHeaders {
     let headers = new HttpHeaders();
-    headers.append("ContentType", "application/json");
-    headers.append("Allow", "*");
+    headers = headers.append("ContentType", "application/json")
+                     .append("Allow", "*");
+    const token: string | null = localStorage.getItem(tokenKey);
+    if(token)
+      headers = headers.append("Authorization", `Bearer ${token}`)
     return headers;
   }
 }

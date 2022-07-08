@@ -14,11 +14,11 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<object>> Login([FromBody]Credentials creds)
+    public async Task<ActionResult<UserAndToken>> Login([FromBody]Credentials creds)
     {
         try
         {
-            return await auth.LogIn(creds);
+            return await auth.Login(creds);
         }
         catch (ResponseException ex)
         {

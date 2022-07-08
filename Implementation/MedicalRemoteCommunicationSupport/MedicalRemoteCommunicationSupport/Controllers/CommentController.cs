@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
+[Authorize]
 [Route("api/[controller]/[action]")]
 public class CommentController : Controller
 {

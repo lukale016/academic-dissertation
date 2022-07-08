@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
+[Authorize]
 [Route("api/[controller]/[action]")]
 public class TopicController : Controller
 {
@@ -12,6 +14,7 @@ public class TopicController : Controller
         unitOfWork = unit;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Topic>>> GetTopics()
     {
@@ -25,6 +28,7 @@ public class TopicController : Controller
         }
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<Topic>> GetTopic([FromRoute]int id)
     {

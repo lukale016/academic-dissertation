@@ -1,9 +1,11 @@
 ﻿using MedicalRemoteCommunicationSupport.Filtering;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
+[Authorize]
 [Route("api/[controller]/[action]")]
 public class UserController : Controller
 {
@@ -66,6 +68,7 @@ public class UserController : Controller
         }
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult> AddDoctor([FromBody]DoctorPostDto dto)
     {
@@ -80,6 +83,7 @@ public class UserController : Controller
         }
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult> AddPatient([FromBody]PatientPostDto dto)
     {

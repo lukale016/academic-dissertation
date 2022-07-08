@@ -1,3 +1,4 @@
+import { tokenKey } from './../../constants/localStorageConsts';
 import { SuperUser } from './../../models/SuperUser';
 import { Router } from '@angular/router';
 import { PatientPostDto } from './../../Dtos/PatientPostDto';
@@ -87,8 +88,11 @@ export class UserService implements OnDestroy {
 
   private getDefaultHeaders() : HttpHeaders {
     let headers = new HttpHeaders();
-    headers.append("ContentType", "application/json");
-    headers.append("Allow", "*");
+    headers = headers.append("ContentType", "application/json")
+                     .append("Allow", "*");
+    const token: string | null = localStorage.getItem(tokenKey);
+    if(token)
+      headers = headers.append("Authorization", `Bearer ${token}`)
     return headers;
   }
 }
