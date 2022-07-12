@@ -1,3 +1,4 @@
+using MedicalRemoteCommunicationSupport.Handlers;
 using MedicalRemoteCommunicationSupport.Services;
 using MedicalRemoteCommunicationSupport.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,6 +30,9 @@ builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IFileManager, FileManager>();
 builder.Services.AddSingleton<ConnectionMultiplexer>(ConnectionMultiplexer.Connect(dbSettings["RedisConnectionUrl"]));
 builder.Services.AddSingleton<MongoClient>(new MongoClient(dbSettings["MongoConnectionUrl"]));
+builder.Services.AddSingleton<IConnectionManager, ConnectionManager>();
+// Scoped
+builder.Services.AddScoped<IHandler<Message>, MessageHandler>();
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

@@ -21,7 +21,8 @@ public class UserController : Controller
     {
         try
         {
-            return new JsonResult((await unitOfWork.PatientRepository.GetUser(username)));
+            Patient patient = (await unitOfWork.PatientRepository.GetUser(username));
+            return new JsonResult(patient);
         }
         catch (ResponseException ex)
         {

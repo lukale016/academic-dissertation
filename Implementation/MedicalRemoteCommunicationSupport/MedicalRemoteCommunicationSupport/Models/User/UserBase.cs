@@ -48,4 +48,9 @@ public abstract class UserBase
 
     [BsonIgnore]
     public List<string> MessageListPriorityList { get; set; } = new();
+
+    public string MessageKeyForUser(string receivedFrom)
+    {
+        return $"{receivedFrom}:SentMessagesTo:{Username}";
+    }
 }
