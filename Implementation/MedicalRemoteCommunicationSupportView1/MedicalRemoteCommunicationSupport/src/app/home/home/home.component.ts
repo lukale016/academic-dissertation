@@ -40,7 +40,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userService.$isDoctor.pipe(takeUntil(this.$destroy))
                     .subscribe((isDoctor: boolean) => this.isDoctor = isDoctor);
     this.userService.$user.pipe(takeUntil(this.$destroy))
-                    .subscribe((user: SuperUser | undefined) => this.user = user);
+                    .subscribe((user: SuperUser | undefined) => {
+                      if(!user)
+                        this.userService.loadUserByToken();
+                      this.user = user
+                    }
+                    );
     this.searchValue.valueChanges.pipe(takeUntil(this.$destroy))
                     .subscribe((searchValue: string) => this._filterAutocomplete(searchValue));
     this.searchValue.valueChanges.pipe(

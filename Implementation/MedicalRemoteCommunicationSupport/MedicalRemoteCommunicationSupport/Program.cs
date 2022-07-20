@@ -1,3 +1,4 @@
+using MedicalRemoteCommunicationSupport.Extensions;
 using MedicalRemoteCommunicationSupport.Handlers;
 using MedicalRemoteCommunicationSupport.Services;
 using MedicalRemoteCommunicationSupport.Settings;
@@ -23,14 +24,10 @@ builder.Services.Configure<JwtSettings>(jwtSettings);
 // CORS
 builder.Services.AddCors();
 // SignalR
+builder.Services.AddSignalR();
 builder.Services.AddSignalRCore();
 // Singletons
-builder.Services.AddSingleton<UnitOfWork>();
-builder.Services.AddSingleton<IAuthService, AuthService>();
-builder.Services.AddSingleton<IFileManager, FileManager>();
-builder.Services.AddSingleton<ConnectionMultiplexer>(ConnectionMultiplexer.Connect(dbSettings["RedisConnectionUrl"]));
-builder.Services.AddSingleton<MongoClient>(new MongoClient(dbSettings["MongoConnectionUrl"]));
-builder.Services.AddSingleton<IConnectionManager, ConnectionManager>();
+builder.Services.AddSingletons(dbSettings);
 // Scoped
 builder.Services.AddScoped<IHandler<Message>, MessageHandler>();
 // Authentication
@@ -77,5 +74,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHubs();
 
 app.Run();

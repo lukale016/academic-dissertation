@@ -43,6 +43,7 @@ public class UnitOfWork
     private ITopicRepostiory topicRepostiory;
     private ICommentRepository commentRepository;
     private IAppointmentRepository appointmentRepository;
+    private IMessageRepository messageRepository;
 
     public IKeyGeneratorService KeyGenerator => keyGenerator ??= new KeyGeneratorService(redis, loggerFactory.CreateLogger<KeyGeneratorService>());
     public IDoctorRepository DoctorRepository => doctorRepository ??= new DoctorRepository(this, mongoDb, redis);
@@ -50,6 +51,7 @@ public class UnitOfWork
     public ITopicRepostiory TopicRepostiory => topicRepostiory ??= new TopicRepository(this, mongoDb, redis);
     public ICommentRepository CommentRepository => commentRepository ??= new CommentRepository(this, redis);
     public IAppointmentRepository AppointmentRepository => appointmentRepository ??= new AppointmentRepository(this, mongoDb, redis);
+    public IMessageRepository MessageRepository => messageRepository ??= new MessageRepository(this, redis);
 
     /// <summary>
     /// Used for dynamic search

@@ -21,24 +21,11 @@ public class MessageHandler : IHandler<Message>
         Guard.Against.NullOrEmpty(handled.From);
         Guard.Against.NullOrEmpty(handled.Content);
         if (!additionalParams.Any())
-            throw new ArgumentException("Sender is required as additional param", nameof(additionalParams));
+            throw new ArgumentException("Receiver is required as additional param", nameof(additionalParams));
         if(additionalParams[0] is not string)
-            throw new ArgumentException("Sender should be first in param list", nameof(additionalParams));
+            throw new ArgumentException("Receiver should be first in param list", nameof(additionalParams));
 
-        string receiverUsername = additionalParams[0] as string;
-        try
-        {
-            Patient receiver = await unitOfWork.PatientRepository.GetUser(receiverUsername);
-            Doctor sender = await unitOfWork.DoctorRepository.GetUser(handled.From);
-            await redis.GetDatabase().ListLeftPushAsync(receiver.MessageKeyForUser(sender.Username), JsonSerializer.Serialize<Message>(handled));
-        }
-        catch(ResponseException ex)
-        {
-            if (!(ex.Status == StatusCodes.Status404NotFound) && !(ex.Status == StatusCodes.Status500InternalServerError))
-                throw;
-            Doctor receiver = await unitOfWork.DoctorRepository.GetUser(receiverUsername);
-            Patient sender = await unitOfWork.PatientRepository.GetUser(handled.From);
-            await redis.GetDatabase().ListLeftPushAsync(receiver.MessageKeyForUser(sender.Username), JsonSerializer.Serialize<Message>(handled));
-        }
+        string receiver = additionalParams[0] as string;
+        await unitOfWork.MessageRepository.StoreMessage(receiver, handled);
     }
 }

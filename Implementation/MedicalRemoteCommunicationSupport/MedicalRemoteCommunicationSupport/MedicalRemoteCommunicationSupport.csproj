@@ -15,12 +15,15 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Data\Repositories\Appointment\AppointmentRepository.cs" />
     <Compile Include="Data\Repositories\Appointment\IAppointmentRepository.cs" />
     <Compile Include="Data\Repositories\Comment\CommentRepository.cs" />
     <Compile Include="Data\Repositories\Comment\ICommentRepository.cs" />
+    <Compile Include="Data\Repositories\Message\IMessageRepository.cs" />
+    <Compile Include="Data\Repositories\Message\MessageRepository.cs" />
     <Compile Include="Data\Repositories\Topic\ITopicRepostiory.cs" />
     <Compile Include="Data\Repositories\Topic\TopicRepository.cs" />
     <Compile Include="Data\Repositories\User\Doctor\DoctorRepository.cs" />
@@ -31,6 +34,8 @@
     <Compile Include="Data\Repositories\User\UserRepository.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
     <Compile Include="Exceptions\ResponseException.cs" />
+    <Compile Include="Extensions\ServiceProviderExtensions.cs" />
+    <Compile Include="Extensions\WebAppExtensions.cs" />
     <Compile Include="Filtering\Criterias\Doctor\DoctorCriteria.cs" />
     <Compile Include="Filtering\Criterias\ICriteria.cs" />
     <Compile Include="Filtering\Criterias\Patient\PatientCriteria.cs" />
@@ -53,8 +58,8 @@
     <Compile Include="Records\DtoRecords.cs" />
     <Compile Include="Services\Auth\AuthService.cs" />
     <Compile Include="Services\Auth\IAuthService.cs" />
-    <Compile Include="Services\ConnectionManager\ConnectionManager.cs" />
-    <Compile Include="Services\ConnectionManager\IConnectionManager.cs" />
+    <Compile Include="Services\Connection\ConnectionManager.cs" />
+    <Compile Include="Services\Connection\IConnectionManager.cs" />
     <Compile Include="Services\FileManager\FileManager.cs" />
     <Compile Include="Services\FileManager\IFileManager.cs" />
     <Compile Include="Services\KeyBuilderAndGenerator\IKeyGeneratorService.cs" />

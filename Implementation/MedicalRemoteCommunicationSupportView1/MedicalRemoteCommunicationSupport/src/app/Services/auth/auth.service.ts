@@ -1,7 +1,7 @@
 import { tokenKey } from './../../constants/localStorageConsts';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserAndToken } from './../../Dtos/UserAndToken';
-import { mergeMap, of, EMPTY } from 'rxjs';
+import { mergeMap, of, EMPTY, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -16,12 +16,9 @@ export class AuthService {
 
   constructor(private client: HttpClient, private snack: MatSnackBar) { }
 
-  login(creds: LoginCreds) : any {
-    let headers = new HttpHeaders();
-    headers = headers.append("ContentType", "application/json")
-                     .append("Allow", "*");
+  login(creds: LoginCreds) : Observable<any> {
     return this.client.post<UserAndToken>(`${this.rootRoute}login`, creds, {
-      headers: headers
+      headers: this.defaultHeaders()
     }).pipe(
       mergeMap((data: UserAndToken) => {
         if(!data.user || !data.token || data.token === "")
@@ -35,6 +32,15 @@ export class AuthService {
     );
   }
 
+  loginUserWithToken(): Observable<any>{
+    let token = localStorage.getItem(tokenKey);
+    if(!token)
+      return EMPTY;
+    return this.client.get<any>(`${this.rootRoute}getUserFromToken`, {
+      headers: this.defaultHeaders().append("Authorization", `Bearer ${token}`)
+    })
+  }
+
   setLoggedStatus(status: boolean)
   {
     this.loggedIn = status;
@@ -43,5 +49,12 @@ export class AuthService {
   isLoggedIn(): boolean
   {
     return this.loggedIn;
+  }
+
+  private defaultHeaders(): HttpHeaders {
+    let headers = new HttpHeaders();
+    headers = headers.append("ContentType", "application/json")
+                     .append("Allow", "*");
+    return headers;
   }
 }

@@ -29,9 +29,11 @@ public class MessagingHub: Hub<IClientMethods>
         return base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendMessage(string receiver, Message message)
+    public async Task SendMessage(string receiver, string content)
     {
+        var message = new Message { From = Context.UserIdentifier, Content = content, TimeSent = DateTime.Now };
         await messageHandler.Handle(message, new[] { receiver });
-        await Clients.Client(await connectionManager.GetConnectionId(receiver)).ReceiveMessage(message);
+        if(await connectionManager.GetConnectionId(receiver) is string connectionId && connectionId != string.Empty)
+            await Clients.Client(connectionId).ReceiveMessage(Context.UserIdentifier, content, message.TimeSent);
     }
 }

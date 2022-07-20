@@ -11,6 +11,7 @@ export class ChatComponent implements OnInit {
 
   constructor() { }
 
+  // Open connection on user login or token login, split items messages by from attribute
   ngOnInit(): void {
   }
 

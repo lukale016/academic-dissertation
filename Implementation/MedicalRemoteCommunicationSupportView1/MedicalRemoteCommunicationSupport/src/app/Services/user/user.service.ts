@@ -1,3 +1,4 @@
+import { MessagingHubService } from './../../hubs/messaging/messaging.hub.service';
 import { tokenKey } from './../../constants/localStorageConsts';
 import { SuperUser } from './../../models/SuperUser';
 import { Router } from '@angular/router';
@@ -25,7 +26,11 @@ export class UserService implements OnDestroy {
 
   private rootRoute: string = environment.serverRoute + "user/"
 
-  constructor(private client: HttpClient, private router: Router, private authService: AuthService, private snack: MatSnackBar) { }
+  constructor(private client: HttpClient, 
+    private router: Router, 
+    private authService: AuthService, 
+    private messagingHub: MessagingHubService,
+    private snack: MatSnackBar) { }
   
   ngOnDestroy(): void {
     this.$destroy.next();
@@ -37,17 +42,20 @@ export class UserService implements OnDestroy {
     this.authService.login(creds).pipe(takeUntil(this.$destroy))
       .subscribe({
       next: (data : any) => {
-        if(data.isDoctor) {
-          this.user.next(new SuperUser(data as Doctor));
-          this.isDoctor.next(true);
-        }
-        else if(data.isDoctor == undefined)
+        if(data.isDoctor == undefined)
         {
           this.user.next(undefined);
+          this.messagingHub.Disconnect();
+        }
+        else if(data.isDoctor) {
+          this.user.next(new SuperUser(data as Doctor));
+          this.isDoctor.next(true);
+          this.messagingHub.Connect();
         }
         else {
           this.user.next(new SuperUser(data as Patient));
           this.isDoctor.next(false);
+          this.messagingHub.Connect();
         }
         this.router.navigate([""]);
       },
@@ -55,6 +63,37 @@ export class UserService implements OnDestroy {
         this.snack.open(error.error, "close", { duration: 2000 })
       }
     });
+  }
+
+  loadUserByToken() {
+    this.authService.loginUserWithToken().pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: (data) => {
+          if(data.isDoctor == undefined)
+          {
+            this.user.next(undefined);
+            this.messagingHub.Disconnect();
+          }
+          else if(data.isDoctor) {
+            this.user.next(new SuperUser(data as Doctor));
+            this.isDoctor.next(true);
+            this.messagingHub.Connect();
+          }
+          else {
+            this.user.next(new SuperUser(data as Patient));
+            this.isDoctor.next(false);
+            this.messagingHub.Connect();
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          if(error.status === 401)
+          {
+            localStorage.removeItem(tokenKey);
+            this.messagingHub.Disconnect();
+            return;
+          }
+        }
+      });
   }
 
   addUser(data: DoctroPostDto | PatientPostDto) {

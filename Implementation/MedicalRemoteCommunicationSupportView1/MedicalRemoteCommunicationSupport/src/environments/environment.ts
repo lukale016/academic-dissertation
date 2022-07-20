@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   serverRoute: "https://localhost:7111/api/",
+  hubRoutes: "https://localhost:7111/hub/",
   appName: "MyDoctor"
 };
 

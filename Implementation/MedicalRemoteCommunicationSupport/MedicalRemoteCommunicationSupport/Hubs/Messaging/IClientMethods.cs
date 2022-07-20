@@ -2,5 +2,5 @@
 
 public interface IClientMethods
 {
-    Task ReceiveMessage(Message message);
+    Task ReceiveMessage(string from, string content, DateTime time);
 }

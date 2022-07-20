@@ -7,7 +7,7 @@ public class ConnectionManager : IConnectionManager
 {
     private Dictionary<string, string> cache;
     private readonly ConnectionMultiplexer redis;
-    private TimeSpan expireTime = TimeSpan.FromHours(2);
+    private TimeSpan expireTime = TimeSpan.FromMinutes(30);
 
     public ConnectionManager(ConnectionMultiplexer redis)
     {
@@ -34,7 +34,7 @@ public class ConnectionManager : IConnectionManager
     public async Task<string> GetConnectionId(string username)
     {
         Guard.Against.NullOrEmpty(username, nameof(username));
-        string result;
+        string result = string.Empty;
         if (cache.TryGetValue(username, out result))
             return result;
         result =  await redis.GetDatabase().StringGetAsync(username);
