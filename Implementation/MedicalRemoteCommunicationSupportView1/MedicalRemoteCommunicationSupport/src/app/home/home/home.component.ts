@@ -11,6 +11,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular
 import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDrawer } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public topicSlice: Topic[] = [];
   public autocompleteOptions: string[] = this.topics.map((t: Topic) => t.title);
   public searchValue: FormControl = new FormControl("");
+  @ViewChild("chatContainer") chatContainer?: MatDrawer;
 
   @ViewChild(MatPaginator) topicPages!: MatPaginator
 

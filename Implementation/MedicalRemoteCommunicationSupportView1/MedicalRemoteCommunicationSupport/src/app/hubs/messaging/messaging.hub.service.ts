@@ -2,7 +2,7 @@ import { tokenKey } from './../../constants/localStorageConsts';
 import { Subject, Observable } from 'rxjs';
 import { environment } from './../../../environments/environment';
 import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions, LogLevel } from '@microsoft/signalr';
 import { Message } from 'src/app/Dtos/Message';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Message } from 'src/app/Dtos/Message';
 })
 export class MessagingHubService {
   private connection?: HubConnection;
-  private connectionRoute = environment.hubRoutes + "mesagging";
+  private connectionRoute = environment.hubRoutes + "messaging";
   private messages: Subject<Message> = new Subject<Message>();
   public $messages: Observable<Message> = this.messages.asObservable();
 
@@ -27,7 +27,9 @@ export class MessagingHubService {
     }
     if(options.accessTokenFactory!() === "")
       return;
-    this.connection = new HubConnectionBuilder().withUrl(this.connectionRoute, options).build();
+    this.connection = new HubConnectionBuilder().withUrl(this.connectionRoute, options)
+                                                .configureLogging(LogLevel.Debug)
+                                                .build();
     this.registerListeners();
     this.connection.start()
   }

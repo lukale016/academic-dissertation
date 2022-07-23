@@ -21,6 +21,7 @@ export class SuperUser {
     endTime: string;
     messageListPriority: string[];
     createdTopics: Topic[];
+    chats: {username: string, fullName: string}[];
 
     constructor(user: Patient | Doctor | null)
     {
@@ -43,6 +44,7 @@ export class SuperUser {
             this.startTime = "";
             this.endTime = "";
             this.createdTopics = [];
+            this.chats = [];
             return;
         }
         if(!user.isDoctor && user.username != "") {
@@ -64,6 +66,7 @@ export class SuperUser {
             this.specialization = "";
             this.startTime = "";
             this.endTime = "";
+            this.chats = patient.chats;
             return;
         }
         else if(user.isDoctor) {
@@ -86,6 +89,7 @@ export class SuperUser {
             this.endTime = doctor.endTime;
             this.messageListPriority = doctor.messageListPriority;
             this.createdTopics = [];
+            this.chats = doctor.chats;
             return;
         }
         console.log("Something went wrong in super user ctor");
@@ -106,5 +110,6 @@ export class SuperUser {
         this.startTime = "";
         this.endTime = "";
         this.createdTopics = [];
+        this.chats = [];
     }
 }

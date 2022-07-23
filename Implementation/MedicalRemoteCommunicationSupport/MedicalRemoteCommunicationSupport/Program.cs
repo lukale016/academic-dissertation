@@ -66,7 +66,8 @@ app.UseCors(options =>
 {
     options.AllowAnyHeader()
            .AllowAnyMethod()
-           .AllowAnyOrigin();
+           .SetIsOriginAllowed((host) => true)
+           .AllowCredentials();
 });
 
 app.UseAuthentication();

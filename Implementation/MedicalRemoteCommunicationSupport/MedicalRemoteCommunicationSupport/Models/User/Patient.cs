@@ -12,6 +12,15 @@ public class Patient : UserBase
     [BsonIgnore]
     public List<Topic> CreatedTopics { get; set; }
 
+    [BsonIgnore]
+    public string SentRequestsListKey => $"SentRequests:{Username}";
+
+    [BsonIgnore]
+    public IEnumerable<string> SentRequests { get; set; }
+
+    [BsonIgnore]
+    public string MyDoctorsListKey => $"Doctors:{Username}";
+
     public Patient(PatientPostDto dto)
     {
         Username = dto.Username;

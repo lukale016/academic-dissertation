@@ -38,16 +38,15 @@ public abstract class UserBase
 
     [DataMember]
     public bool IsDoctor { get; protected set; }
+
     [BsonIgnore]
     public string AppointmentDatesListKey => $"AppointmentDates:{Username}";
+    
     [BsonIgnore]
     public List<Appointment> Appointments { get; set; } = new();
-
+    
     [BsonIgnore]
-    public string MessageListPriorityListKey => $"MessageListPrio:{Username}";
-
-    [BsonIgnore]
-    public List<string> MessageListPriorityList { get; set; } = new();
+    public IEnumerable<(string Username, string FullName)> Chats { get; set; } = Enumerable.Empty<(string Username, string FullName)>();
 
     public string MessageKeyForUser(string receivedFrom)
     {

@@ -13,7 +13,7 @@ public class DoctorCriteria: ICriteria<Doctor>
     public FilterDefinition<Doctor> BuildFilter()
     {
         FilterDefinitionBuilder<Doctor> builder = Builders<Doctor>.Filter;
-        var filter = builder.Empty;
+        var filter = builder.Eq(nameof(Doctor.IsDoctor), true);
 
         if (!string.IsNullOrWhiteSpace(Username))
         {

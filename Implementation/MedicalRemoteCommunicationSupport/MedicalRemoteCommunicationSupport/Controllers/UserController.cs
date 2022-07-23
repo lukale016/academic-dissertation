@@ -16,6 +16,7 @@ public class UserController : Controller
         unitOfWork = unit;
     }
 
+    [AllowAnonymous]
     [HttpGet("{username}")]
     public async Task<ActionResult<object>> GetUser([FromRoute]string username)
     {
@@ -43,7 +44,7 @@ public class UserController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients([FromBody]PatientCriteria criteria)
     {
         try
@@ -56,7 +57,7 @@ public class UserController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<ActionResult<IEnumerable<Doctor>>> SearchDoctors([FromBody]DoctorCriteria criteria)
     {
         try

@@ -17,6 +17,7 @@ export class Doctor {
     specialization: string;
     startTime: string;
     endTime: string;
+    chats: {username: string, fullName: string}[];
 
     /**
      * @summary One arg copy ctor
@@ -41,6 +42,7 @@ export class Doctor {
             this.specialization = "";
             this.startTime = "";
             this.endTime = "";
+            this.chats = [];
             return;
         }
         if(args.length == 1)
@@ -62,6 +64,7 @@ export class Doctor {
             this.specialization = doctor.specialization;
             this.startTime = doctor.startTime;
             this.endTime = doctor.endTime;
+            this.chats = doctor.chats;
             return;
         }
         if(args.length == 11)
@@ -82,6 +85,7 @@ export class Doctor {
             this.specialization = args[7] as string;
             this.startTime = args[8] as string;
             this.endTime = args[9] as string;
+            this.chats = [];
             return;
         }
         console.log("Something went wrong in doctor ctor");
@@ -101,5 +105,6 @@ export class Doctor {
         this.specialization = "";
         this.startTime = "";
         this.endTime = "";
+        this.chats = [];
     }
 }

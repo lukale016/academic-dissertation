@@ -14,6 +14,7 @@ export class Patient {
     appointments: Appointment[];
     messageListPriority: string[];
     createdTopics: Topic[];
+    chats: {username: string, fullName: string}[];
 
     /**
      * @summary One arg copy ctor
@@ -34,6 +35,7 @@ export class Patient {
             this.appointments = [];
             this.messageListPriority = [];
             this.createdTopics = [];
+            this.chats = [];
             return;
         }
         if(args.length == 1)
@@ -51,6 +53,7 @@ export class Patient {
             this.appointments = patient.appointments;
             this.messageListPriority = patient.messageListPriority;
             this.createdTopics = patient.createdTopics;
+            this.chats = patient.chats;
             return;
         }
         if(args.length == 7)
@@ -67,6 +70,7 @@ export class Patient {
             this.appointments = [];
             this.messageListPriority = [];
             this.createdTopics = [];
+            this.chats = [];
             return;
         }
         console.log("Something went wrong in patient ctor");
@@ -82,5 +86,6 @@ export class Patient {
         this.appointments = [];
         this.messageListPriority = [];
         this.createdTopics = [];
+        this.chats = [];
     }
 }

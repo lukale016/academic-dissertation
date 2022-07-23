@@ -19,7 +19,10 @@ public class ConnectionManager : IConnectionManager
     {
         Guard.Against.NullOrEmpty(username, nameof(username));
         Guard.Against.NullOrEmpty(connectionId, nameof(connectionId));
-        cache.Add(username, connectionId);
+        if(cache.ContainsKey(username))
+            cache[username] = connectionId;
+        else
+            cache.Add(username, connectionId);
         redis.GetDatabase().StringSetAsync(username, connectionId);
         Task.Delay(expireTime).ContinueWith(_ => CacheExpired(username));
     }
