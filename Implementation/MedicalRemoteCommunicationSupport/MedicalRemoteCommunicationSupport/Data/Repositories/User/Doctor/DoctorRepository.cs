@@ -23,6 +23,7 @@ public class DoctorRepository : UserRepository<Doctor>, IDoctorRepository
         IDatabase db = redis.GetDatabase();
         doctor.Requests = (await db.ListRangeAsync(doctor.RequestListKey))
                                    .Select(rv => JsonSerializer.Deserialize<RequestDto>(rv.ToString()));
+        doctor.Patients = (await db.ListRangeAsync(doctor.PatientListKey)).Select(rv => JsonSerializer.Deserialize<MyConnection>(rv));
 
         return doctor;
     }

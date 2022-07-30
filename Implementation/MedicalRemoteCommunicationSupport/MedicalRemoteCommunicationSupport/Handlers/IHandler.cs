@@ -1,6 +1,6 @@
 ﻿namespace MedicalRemoteCommunicationSupport.Handlers;
 
-public interface IHandler<HANDLED>
+public interface IHandler<HANDLED, RETURNED>
 {
-    Task Handle(HANDLED handled, params object[] additionalParams);
+    Task<RETURNED> Handle(HANDLED handled, params object[] additionalParams);
 }

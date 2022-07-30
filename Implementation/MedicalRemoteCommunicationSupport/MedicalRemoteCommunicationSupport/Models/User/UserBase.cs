@@ -44,9 +44,6 @@ public abstract class UserBase
     
     [BsonIgnore]
     public List<Appointment> Appointments { get; set; } = new();
-    
-    [BsonIgnore]
-    public IEnumerable<(string Username, string FullName)> Chats { get; set; } = Enumerable.Empty<(string Username, string FullName)>();
 
     public string MessageKeyForUser(string receivedFrom)
     {

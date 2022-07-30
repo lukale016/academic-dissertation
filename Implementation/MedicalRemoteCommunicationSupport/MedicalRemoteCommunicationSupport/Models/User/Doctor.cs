@@ -18,6 +18,9 @@ public class Doctor : UserBase
     [BsonIgnore]
     public string PatientListKey => $"Patients:{Username}";
 
+    [BsonIgnore]
+    public IEnumerable<MyConnection> Patients { get; set; } = Enumerable.Empty<MyConnection>();
+
     [DataMember]
     public string Specialization { get; set; }
 

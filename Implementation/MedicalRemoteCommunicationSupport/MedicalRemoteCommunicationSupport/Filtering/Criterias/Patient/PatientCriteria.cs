@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using System.Text.RegularExpressions;
 
 namespace MedicalRemoteCommunicationSupport.Filtering;
 
@@ -16,15 +18,18 @@ public class PatientCriteria: ICriteria<Patient>
 
         if(!string.IsNullOrWhiteSpace(Username))
         {
-            filter &= builder.Eq(nameof(Patient.Username), Username);
+            BsonRegularExpression exp = new BsonRegularExpression(new Regex($"^({Username}).*", RegexOptions.IgnoreCase));
+            filter &= builder.Regex(nameof(Patient.Username), exp);
         }
         if (!string.IsNullOrWhiteSpace(Name))
         {
-            filter &= builder.Eq(nameof(Patient.Name), Name);
+            BsonRegularExpression exp = new BsonRegularExpression(new Regex($"^({Name}).*", RegexOptions.IgnoreCase));
+            filter &= builder.Regex(nameof(Patient.Name), exp);
         }
         if (!string.IsNullOrWhiteSpace(Surname))
         {
-            filter &= builder.Eq(nameof(Patient.Surname), Surname);
+            BsonRegularExpression exp = new BsonRegularExpression(new Regex($"^({Surname}).*", RegexOptions.IgnoreCase));
+            filter &= builder.Regex(nameof(Patient.Surname), exp);
         }
         if (!string.IsNullOrWhiteSpace(Gender))
         {

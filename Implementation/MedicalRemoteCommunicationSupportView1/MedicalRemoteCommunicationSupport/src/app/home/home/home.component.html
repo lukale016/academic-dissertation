@@ -13,7 +13,13 @@
           >Register as doctor</mat-list-item
         >
       </mat-action-list>
+      <mat-action-list *ngIf="user">
+        <mat-list-item (click)="logout()">Logout</mat-list-item>
+      </mat-action-list>
       <ng-container *ngIf="user && !user.isDoctor">
+        <mat-action-list>
+          <mat-list-item routerLink="doctor-overview">Doctors</mat-list-item>
+        </mat-action-list>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             Created topics
@@ -96,7 +102,12 @@
     <div class="flexVertical">
       <h2>Chat</h2>
       <mat-accordion class="fillParent" multi>
-        <app-chat *ngFor="let chat of user.chats" [chatUsername]="chat.username" [user]="user"></app-chat>
+      <ng-container *ngIf="!user.isDoctor">
+        <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [user]="user"></app-chat>
+      </ng-container>
+      <ng-container *ngIf="user.isDoctor">
+        <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [user]="user"></app-chat>
+      </ng-container>
       </mat-accordion>
     </div>
   </mat-drawer>

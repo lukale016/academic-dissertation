@@ -1,3 +1,4 @@
+import { DoctorOverviewComponent } from './doctor-overview/doctor-overview.component';
 import { TopicComponent } from './topic/topic/topic.component';
 import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './home/home/home.component';
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent
+  },
+  {
+    path: "doctor-overview",
+    component: DoctorOverviewComponent
   },
   {
     path: "topic/:id",

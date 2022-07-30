@@ -14,14 +14,15 @@ export class SuperUser {
     isDoctor: boolean;
     appointments: Appointment[];
     fullName: string;
-    requests: Request[];
-    patients: Patient[];
     specialization: string;
     startTime: string;
     endTime: string;
     messageListPriority: string[];
     createdTopics: Topic[];
-    chats: {username: string, fullName: string}[];
+    sentRequests: string[];
+    requests: {username: string, fullName: string}[];
+    patients: {username: string, fullName: string}[];
+    myDoctors: {username: string, fullName: string}[];
 
     constructor(user: Patient | Doctor | null)
     {
@@ -44,7 +45,8 @@ export class SuperUser {
             this.startTime = "";
             this.endTime = "";
             this.createdTopics = [];
-            this.chats = [];
+            this.sentRequests = [];
+            this.myDoctors = [];
             return;
         }
         if(!user.isDoctor && user.username != "") {
@@ -66,7 +68,8 @@ export class SuperUser {
             this.specialization = "";
             this.startTime = "";
             this.endTime = "";
-            this.chats = patient.chats;
+            this.sentRequests = patient.sentRequests;
+            this.myDoctors = patient.myDoctors;
             return;
         }
         else if(user.isDoctor) {
@@ -83,13 +86,15 @@ export class SuperUser {
             this.appointments = doctor.appointments;
             this.messageListPriority = doctor.messageListPriority;
             this.requests = doctor.requests;
-            this.patients = doctor.patients;
             this.specialization = doctor.specialization;
             this.startTime = doctor.startTime;
             this.endTime = doctor.endTime;
             this.messageListPriority = doctor.messageListPriority;
             this.createdTopics = [];
-            this.chats = doctor.chats;
+            this.sentRequests = [];
+            this.myDoctors = [];
+            this.requests = doctor.requests;
+            this.patients = doctor.patients;
             return;
         }
         console.log("Something went wrong in super user ctor");
@@ -110,6 +115,7 @@ export class SuperUser {
         this.startTime = "";
         this.endTime = "";
         this.createdTopics = [];
-        this.chats = [];
+        this.sentRequests = [];
+        this.myDoctors = [];
     }
 }

@@ -23,6 +23,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatRadioModule } from "@angular/material/radio";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './register/register.component';
@@ -30,6 +31,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ChatComponent } from './home/chat/chat/chat.component';
 import { TopicComponent } from './topic/topic/topic.component';
 import { AddTopicDialogComponent } from './home/add-topic-dialog/add-topic-dialog.component';
+import { DoctorOverviewComponent } from './doctor-overview/doctor-overview.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { AddTopicDialogComponent } from './home/add-topic-dialog/add-topic-dialo
     ChatComponent,
     TopicComponent,
     AddTopicDialogComponent,
+    DoctorOverviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,6 +67,7 @@ import { AddTopicDialogComponent } from './home/add-topic-dialog/add-topic-dialo
     MatDialogModule,
     MatBadgeModule,
     MatTooltipModule,
+    MatRadioModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,

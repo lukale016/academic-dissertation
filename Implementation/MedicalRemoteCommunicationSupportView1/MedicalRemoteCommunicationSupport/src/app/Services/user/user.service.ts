@@ -1,3 +1,5 @@
+import { PatientCriteria } from './../../../criterias/patientCriteria';
+import { DoctorCriteria } from './../../../criterias/doctorCriteria';
 import { MessagingHubService } from './../../hubs/messaging/messaging.hub.service';
 import { tokenKey } from './../../constants/localStorageConsts';
 import { SuperUser } from './../../models/SuperUser';
@@ -123,6 +125,20 @@ export class UserService implements OnDestroy {
           }
       });
     }
+  }
+
+  searchDoctors(criteria: DoctorCriteria): Observable<Doctor[]> {
+    return this.client.post<Doctor[]>(`${this.rootRoute}SearchDoctors`, criteria, { headers: this.getDefaultHeaders() });
+  }
+
+  searchPatients(criteria: PatientCriteria): Observable<Patient[]> {
+    return this.client.post<Patient[]>(`${this.rootRoute}SearchPatients`, criteria, { headers: this.getDefaultHeaders() });
+  }
+
+  logout() {
+    localStorage.removeItem(tokenKey);
+    this.user.next(undefined);
+    this.router.navigate([""]);
   }
 
   private getDefaultHeaders() : HttpHeaders {

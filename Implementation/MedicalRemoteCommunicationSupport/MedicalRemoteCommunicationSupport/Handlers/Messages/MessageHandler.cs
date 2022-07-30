@@ -4,18 +4,16 @@ using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Handlers;
 
-public class MessageHandler : IHandler<Message>
+public class MessageHandler : IHandler<Message, Message>
 {
     private readonly UnitOfWork unitOfWork;
-    private readonly ConnectionMultiplexer redis;
 
-    public MessageHandler(UnitOfWork unit, ConnectionMultiplexer redis)
+    public MessageHandler(UnitOfWork unit)
     {
         this.unitOfWork = unit;
-        this.redis = redis;
     }
 
-    public async Task Handle(Message handled, params object[] additionalParams)
+    public async Task<Message> Handle(Message handled, params object[] additionalParams)
     {
         Guard.Against.Null(handled);
         Guard.Against.NullOrEmpty(handled.From);
@@ -27,5 +25,7 @@ public class MessageHandler : IHandler<Message>
 
         string receiver = additionalParams[0] as string;
         await unitOfWork.MessageRepository.StoreMessage(receiver, handled);
+
+        return handled;
     }
 }

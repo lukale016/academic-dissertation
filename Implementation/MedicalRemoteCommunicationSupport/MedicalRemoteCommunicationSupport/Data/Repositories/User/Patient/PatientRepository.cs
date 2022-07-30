@@ -1,6 +1,7 @@
 ﻿using MedicalRemoteCommunicationSupport.Filtering;
 using MongoDB.Driver;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Data.Repositories;
 
@@ -26,7 +27,8 @@ public class PatientRepository : UserRepository<Patient>, IPatientRepository
                                     .Select(rv => int.Parse(rv.ToString())).ToList();
         patient.CreatedTopics = (await topics.FindAsync(Builders<Topic>.Filter.Empty))
                                         .ToList().Where(t => createdIds.Contains(t.Id)).ToList();
-
+        patient.SentRequests = (await db.ListRangeAsync(patient.SentRequestsListKey)).Select(rv => rv.ToString());
+        patient.MyDoctors = (await db.ListRangeAsync(patient.MyDoctorsListKey)).Select(rv => JsonSerializer.Deserialize<MyConnection>(rv));
         return patient;
     }
 

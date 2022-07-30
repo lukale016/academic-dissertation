@@ -28,8 +28,10 @@ builder.Services.AddSignalR();
 builder.Services.AddSignalRCore();
 // Singletons
 builder.Services.AddSingletons(dbSettings);
-// Scoped
-builder.Services.AddScoped<IHandler<Message>, MessageHandler>();
+// Handlers
+builder.Services.AddScoped<IHandler<Message, Message>, MessageHandler>();
+builder.Services.AddScoped<IHandler<string, RequestDto>, RequestHandler>();
+builder.Services.AddScoped<IHandler<string, MyConnection>, RequestAcceptedHandler>();
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

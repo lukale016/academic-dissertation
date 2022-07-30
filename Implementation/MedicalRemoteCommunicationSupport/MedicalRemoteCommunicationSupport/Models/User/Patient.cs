@@ -21,6 +21,9 @@ public class Patient : UserBase
     [BsonIgnore]
     public string MyDoctorsListKey => $"Doctors:{Username}";
 
+    [BsonIgnore]
+    public IEnumerable<MyConnection> MyDoctors { get; set; } = Enumerable.Empty<MyConnection>();
+
     public Patient(PatientPostDto dto)
     {
         Username = dto.Username;

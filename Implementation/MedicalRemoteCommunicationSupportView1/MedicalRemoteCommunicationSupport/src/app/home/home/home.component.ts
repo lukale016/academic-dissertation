@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { ModelValidator } from './../../helpers/ModelValidator';
 import { AddTopicDialogComponent } from './../add-topic-dialog/add-topic-dialog.component';
@@ -20,7 +21,7 @@ import { MatDrawer } from '@angular/material/sidenav';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public appName: string = environment.appName;
-  public user: SuperUser | undefined;
+  public user?: SuperUser;
   public isDoctor: boolean = false; 
   private $destroy: Subject<void> = new Subject<void>();
   public topics: Topic[] = [];
@@ -35,7 +36,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService, 
     private topicService: TopicService, 
     private dialog: MatDialog,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private router: Router
     ) { }
 
   ngOnInit(): void {
@@ -45,7 +47,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     .subscribe((user: SuperUser | undefined) => {
                       if(!user)
                         this.userService.loadUserByToken();
-                      this.user = user
+                      this.user = user;
                     }
                     );
     this.searchValue.valueChanges.pipe(takeUntil(this.$destroy))
@@ -103,6 +105,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                           this._filterTopics(this.searchValue.value);
                        });
     });
+  }
+
+  logout() {
+    this.userService.logout();
   }
 
   ngOnDestroy(): void {

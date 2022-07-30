@@ -1,0 +1,95 @@
+<mat-drawer-container class="fillParent" autosize>
+    <mat-drawer class="sidenav" opened mode="side">
+      <div class="flexVertical">
+        <h2 *ngIf="user">{{ user.fullName }}</h2>
+        <h2 *ngIf="!user">Menu</h2>
+        <mat-divider></mat-divider>
+        <mat-action-list *ngIf="!user">
+          <mat-list-item routerLink="login">Login</mat-list-item>
+          <mat-list-item routerLink="register" [state]="{ isDoc: 0 }">Register as patient</mat-list-item>
+          <mat-list-item routerLink="register" [state]="{ isDoc: 1 }">Register as doctor</mat-list-item>
+        </mat-action-list>
+        <mat-action-list *ngIf="user">
+            <mat-list-item (click)="logout()">Logout</mat-list-item>
+        </mat-action-list>
+        <ng-container *ngIf="user && !user.isDoctor">
+            <mat-action-list>
+                <mat-list-item routerLink="doctor-overview">Doctors</mat-list-item>
+            </mat-action-list>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    Created topics
+                </mat-expansion-panel-header>
+                <mat-action-list>
+                    <mat-list-item *ngFor="let topic of user.createdTopics" [routerLink]="['topic', topic.id]">{{ topic.title }}</mat-list-item>
+                </mat-action-list>
+          </mat-expansion-panel>
+        </ng-container>
+      </div>
+    </mat-drawer>
+    <p class="toolbar">
+      <mat-toolbar class="flexSpaced" color="primary">
+        <span class="pointer" routerLink="">{{ appName }}</span>
+        <button
+          *ngIf="user && chatContainer"
+          mat-icon-button
+          (click)="chatContainer.toggle()"
+          aria-label="icon-button with add icon"
+        >
+          <mat-icon>chat_bubble_outline</mat-icon>
+        </button>
+      </mat-toolbar>
+    </p>
+    <main class="flex fillParent">
+        <div class="flexVertical centerContent control fillParent">
+            <h2 class="controlItem">Filters</h2>
+            <mat-form-field>
+                <input matInput placeholder="Name" [(ngModel)]="criteriaBind.name" appearance="fill" />
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput placeholder="Surname" [(ngModel)]="criteriaBind.surname" appearance="fill" />
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Gender</mat-label>
+                <mat-select [(ngModel)]="criteriaBind.gender">
+                  <mat-option value="male">Male</mat-option>
+                  <mat-option value="female">Female</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Specialization</mat-label>
+                <mat-select [(ngModel)]="criteriaBind.specialization">
+                  <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{ specialization }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div>
+                <button mat-raised-button color="primary" class="topBotMarg-10" (click)="applyFilters()">Apply filters</button>
+                <button mat-raised-button color="primary" class="topBotMarg-10" (click)="clearFilters()">Clear</button>
+            </div>
+        </div>
+        <div class="flexVertical centerContent fillParent doctorItem topicItem">
+            <h2 class="controlItem">Doctors</h2>
+            <mat-card class="doctorItem" *ngFor="let doctor of doctors">
+                <mat-card-title>{{ doctor.fullName }}</mat-card-title>
+                <mat-card-subtitle>{{ doctor.specialization }}</mat-card-subtitle>
+                <mat-card-actions>
+                  <button mat-button>Send request</button>
+                </mat-card-actions>
+              </mat-card>
+        </div>
+    </main>
+    <mat-drawer *ngIf="user" #chatContainer class="chatPanel" mode="side" position="end">
+      <div class="flexVertical">
+        <h2>Chat</h2>
+        <mat-accordion class="fillParent" multi>
+        <ng-container *ngIf="!user.isDoctor">
+          <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [user]="user"></app-chat>
+        </ng-container>
+        <ng-container *ngIf="user.isDoctor">
+          <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [user]="user"></app-chat>
+        </ng-container>
+        </mat-accordion>
+      </div>
+    </mat-drawer>
+  </mat-drawer-container>
+  
