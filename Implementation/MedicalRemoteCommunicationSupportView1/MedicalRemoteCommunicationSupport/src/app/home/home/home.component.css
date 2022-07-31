@@ -73,3 +73,7 @@ button {
 .noGrow {
     flex-grow: 0;
 }
+
+.marginLeft-10 {
+    margin-left: 10px;
+}

@@ -7,3 +7,4 @@ public record PatientPostDto(string Username, string Password, string Email, str
 public record AppointmentPostDto(string Doctor, string Patient, DateTime Date, DateTime StartTime, DateTime EndTime);
 public record struct RequestDto(string Username, string FullName);
 public record struct MyConnection(string Username, string FullName);
+public record struct RequestRejectionData(string RejectedUsername, string DoctorFullName);

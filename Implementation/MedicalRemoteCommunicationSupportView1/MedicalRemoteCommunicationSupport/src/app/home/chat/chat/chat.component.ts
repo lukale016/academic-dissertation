@@ -1,4 +1,4 @@
-import { Subject, takeUntil, tap } from 'rxjs';
+import { Subject, takeUntil, tap, first, concatMap } from 'rxjs';
 import { MessageService } from './../../../Services/message/message.service';
 import { MessagingHubService } from './../../../hubs/messaging/messaging.hub.service';
 import { SuperUser } from './../../../models/SuperUser';
@@ -24,16 +24,17 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(private messagingHub: MessagingHubService, private messageService: MessageService) { }
 
   ngOnInit(): void {
+    console.log(this.user, this.chatUsername, this.chatTitle);
     this.messageService.messagesForUser(this.chatUsername)
-      .pipe(takeUntil(this.$destroy),
-        tap<Message[]>((messages: Message[]) => this.messages = messages.map(m => this.mapMessage(m))),
-        tap(() => {
+      .pipe(takeUntil(this.$destroy))
+        .subscribe((messages: Message[]) => {
+          this.messages = messages.map(m => this.mapMessage(m));
           this.messagingHub.$messages.pipe(takeUntil(this.$destroy))
             .subscribe((message: Message) => {
               this.messages.push(this.mapMessage(message));
               this.newMessages = true;
             });
-        }));
+        });
   }
 
   sendMessage() {

@@ -27,12 +27,11 @@ public class RequestHandler : IHandler<string, RequestDto>
         Patient patient = await unitOfWork.PatientRepository.GetUser(senderUsername);
         Doctor doctor = await unitOfWork.DoctorRepository.GetUser(handled);
 
-        var patientRequest = new RequestDto { Username = doctor.Username, FullName = doctor.FullName };
         var doctorRequest = new RequestDto { Username = patient.Username, FullName = patient.FullName };
 
         IDatabase db = redis.GetDatabase();
-        await db.ListLeftPushAsync(patient.MyDoctorsListKey, JsonSerializer.Serialize<RequestDto>(patientRequest));
-        await db.ListLeftPushAsync(doctor.PatientListKey, JsonSerializer.Serialize<RequestDto>(doctorRequest));
+        await db.ListLeftPushAsync(patient.SentRequestsListKey, doctor.Username);
+        await db.ListLeftPushAsync(doctor.RequestListKey, JsonSerializer.Serialize<RequestDto>(doctorRequest));
 
         return doctorRequest;
     }

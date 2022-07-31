@@ -73,7 +73,7 @@
                 <mat-card-title>{{ doctor.fullName }}</mat-card-title>
                 <mat-card-subtitle>{{ doctor.specialization }}</mat-card-subtitle>
                 <mat-card-actions>
-                  <button mat-button>Send request</button>
+                  <button mat-button [hidden]="alreadySentOrAccepted(doctor.username)" (click)="sendRequest(doctor.username)">Send request</button>
                 </mat-card-actions>
               </mat-card>
         </div>
@@ -83,10 +83,10 @@
         <h2>Chat</h2>
         <mat-accordion class="fillParent" multi>
         <ng-container *ngIf="!user.isDoctor">
-          <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [user]="user"></app-chat>
+          <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [chatTitle]="chat.fullName" [user]="user"></app-chat>
         </ng-container>
         <ng-container *ngIf="user.isDoctor">
-          <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [user]="user"></app-chat>
+          <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [chatTitle]="chat.fullName" [user]="user"></app-chat>
         </ng-container>
         </mat-accordion>
       </div>

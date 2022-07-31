@@ -29,6 +29,24 @@
           </mat-action-list>
         </mat-expansion-panel>
       </ng-container>
+      <ng-container *ngIf="user && user.isDoctor">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            Patient requests
+          </mat-expansion-panel-header>
+          <mat-selection-list>
+            <mat-list-item *ngFor="let request of user.requests">
+              <div class="flexSpaced fillParent centerContent">
+                {{ request.fullName }}
+                <div class="flex centerContent marginLeft-10">
+                  <mat-icon color="primary" (click)="acceptRequest(request.username)">check</mat-icon>
+                  <mat-icon color="danger" (click)="rejectRequest(request.username)">close</mat-icon>
+                </div>
+              </div>
+            </mat-list-item>
+          </mat-selection-list>
+        </mat-expansion-panel>
+      </ng-container>
     </div>
   </mat-drawer>
   <p class="toolbar">
@@ -83,8 +101,7 @@
           <div class="flexSpaced fillParent centerContent">
             {{ topic.title }}
             <div class="flex centerContent">
-              <mat-icon color="primary">comment</mat-icon
-              >{{ topic.comments ? topic.comments.length : 0 }}
+              <mat-icon color="primary">comment</mat-icon>
             </div>
           </div>
         </mat-list-item>
@@ -103,10 +120,10 @@
       <h2>Chat</h2>
       <mat-accordion class="fillParent" multi>
       <ng-container *ngIf="!user.isDoctor">
-        <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [user]="user"></app-chat>
+        <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [chatTitle]="chat.fullName" [user]="user"></app-chat>
       </ng-container>
       <ng-container *ngIf="user.isDoctor">
-        <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [user]="user"></app-chat>
+        <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [chatTitle]="chat.fullName" [user]="user"></app-chat>
       </ng-container>
       </mat-accordion>
     </div>

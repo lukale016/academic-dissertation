@@ -46,6 +46,7 @@
     <Compile Include="Handlers\Messages\MessageHandler.cs" />
     <Compile Include="Handlers\Request\RequestAcceptedHandler.cs" />
     <Compile Include="Handlers\Request\RequestHandler.cs" />
+    <Compile Include="Handlers\Request\RequestRejectedHandler.cs" />
     <Compile Include="Hubs\Messaging\IClientMethods.cs" />
     <Compile Include="Hubs\Messaging\MessagingHub.cs" />
     <Compile Include="Models\Appointment.cs" />

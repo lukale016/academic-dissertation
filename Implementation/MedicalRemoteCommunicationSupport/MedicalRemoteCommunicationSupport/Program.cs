@@ -31,7 +31,8 @@ builder.Services.AddSingletons(dbSettings);
 // Handlers
 builder.Services.AddScoped<IHandler<Message, Message>, MessageHandler>();
 builder.Services.AddScoped<IHandler<string, RequestDto>, RequestHandler>();
-builder.Services.AddScoped<IHandler<string, MyConnection>, RequestAcceptedHandler>();
+builder.Services.AddScoped<IHandler<string, (string patientFullName, MyConnection connection)>, RequestAcceptedHandler>();
+builder.Services.AddScoped<IHandler<string, RequestRejectionData>, RequestRejectedHandler>();
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

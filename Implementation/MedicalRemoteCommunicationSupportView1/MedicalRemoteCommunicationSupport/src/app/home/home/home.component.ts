@@ -1,3 +1,5 @@
+import { MessagingHubService } from './../../hubs/messaging/messaging.hub.service';
+import { UserContainerService } from './../../container/userContainer/user-container.service';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { ModelValidator } from './../../helpers/ModelValidator';
@@ -8,7 +10,7 @@ import { TopicService } from './../../Services/topic/topic.service';
 import { debounceTime, first, Subject, takeUntil } from 'rxjs';
 import { SuperUser } from './../../models/SuperUser';
 import { UserService } from './../../Services/user/user.service';
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,21 +35,24 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) topicPages!: MatPaginator
 
   constructor(
-    private userService: UserService, 
+    private userService: UserService,
+    private userContainer: UserContainerService, 
     private topicService: TopicService, 
     private dialog: MatDialog,
     private snack: MatSnackBar,
-    private router: Router
+    private changeDetector: ChangeDetectorRef,
+    private messageHub: MessagingHubService
     ) { }
 
   ngOnInit(): void {
     this.userService.$isDoctor.pipe(takeUntil(this.$destroy))
                     .subscribe((isDoctor: boolean) => this.isDoctor = isDoctor);
-    this.userService.$user.pipe(takeUntil(this.$destroy))
+    this.userContainer.$user.pipe(takeUntil(this.$destroy))
                     .subscribe((user: SuperUser | undefined) => {
                       if(!user)
                         this.userService.loadUserByToken();
                       this.user = user;
+                      this.changeDetector.detectChanges();
                     }
                     );
     this.searchValue.valueChanges.pipe(takeUntil(this.$destroy))
@@ -109,6 +114,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   logout() {
     this.userService.logout();
+  }
+
+  acceptRequest(patient: string) {
+    this.messageHub.acceptRequest(patient);
+  }
+  
+  rejectRequest(patient: string) {
+    this.messageHub.rejectRequest(patient);
   }
 
   ngOnDestroy(): void {

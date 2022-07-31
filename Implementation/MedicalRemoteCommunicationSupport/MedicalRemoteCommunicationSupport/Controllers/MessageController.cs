@@ -5,7 +5,7 @@ using System.Security.Claims;
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
 [Authorize]
-[Route("[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 public class MessageController : Controller
 {
     private readonly UnitOfWork unitOfWork;

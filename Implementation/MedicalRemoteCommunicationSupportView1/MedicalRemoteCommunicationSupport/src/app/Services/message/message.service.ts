@@ -9,7 +9,7 @@ import { tokenKey } from 'src/app/constants/localStorageConsts';
   providedIn: 'root'
 })
 export class MessageService {
-  private rootRoute: string = environment.serverRoute + "message"
+  private rootRoute: string = environment.serverRoute + "message/"
 
   constructor(private client: HttpClient) { }
 

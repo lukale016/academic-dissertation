@@ -1,14 +1,15 @@
+import { UserService } from './../../Services/user/user.service';
+import { UserContainerService } from './../../container/userContainer/user-container.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommentService } from './../../Services/comment/comment.service';
 import { ModelValidator } from './../../helpers/ModelValidator';
 import { SuperUser } from './../../models/SuperUser';
-import { UserService } from './../../Services/user/user.service';
 import { Comment } from './../../models/Comment';
 import { Topic } from './../../models/Topic';
 import { TopicService } from './../../Services/topic/topic.service';
 import { environment } from './../../../environments/environment';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { mergeMap, Subject, takeUntil, EMPTY, map } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
@@ -25,12 +26,14 @@ export class TopicComponent implements OnInit, OnDestroy {
 
   private $destroy: Subject<void> = new Subject<void>();
 
-  constructor(private topicService: TopicService, 
+  constructor(private topicService: TopicService,
     private userService: UserService,
+    private userContainer: UserContainerService,
     private commentService: CommentService,
     private snack: MatSnackBar,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -51,8 +54,13 @@ export class TopicComponent implements OnInit, OnDestroy {
         }
       })
 
-      this.userService.$user.pipe(takeUntil(this.$destroy))
-        .subscribe((user: SuperUser | undefined) => this.user = user);
+      this.userContainer.$user.pipe(takeUntil(this.$destroy))
+        .subscribe((user: SuperUser | undefined) => {
+          if(!user)
+            this.userService.loadUserByToken();
+          this.user = user
+          this.changeDetector.detectChanges();
+        });
   }
 
   addComment() {

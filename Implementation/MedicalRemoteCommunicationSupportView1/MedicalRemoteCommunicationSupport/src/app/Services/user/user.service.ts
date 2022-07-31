@@ -1,3 +1,4 @@
+import { UserContainerService } from './../../container/userContainer/user-container.service';
 import { PatientCriteria } from './../../../criterias/patientCriteria';
 import { DoctorCriteria } from './../../../criterias/doctorCriteria';
 import { MessagingHubService } from './../../hubs/messaging/messaging.hub.service';
@@ -20,8 +21,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class UserService implements OnDestroy {
-  private user: BehaviorSubject<SuperUser | undefined> = new BehaviorSubject<SuperUser | undefined>(undefined);
-  public $user: Observable<SuperUser | undefined> = this.user.asObservable();
   private isDoctor: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public $isDoctor: Observable<boolean> = this.isDoctor.asObservable();
   private $destroy: Subject<void> = new Subject<void>();
@@ -29,7 +28,8 @@ export class UserService implements OnDestroy {
   private rootRoute: string = environment.serverRoute + "user/"
 
   constructor(private client: HttpClient, 
-    private router: Router, 
+    private router: Router,
+    private userContainer: UserContainerService,
     private authService: AuthService, 
     private messagingHub: MessagingHubService,
     private snack: MatSnackBar) { }
@@ -46,16 +46,16 @@ export class UserService implements OnDestroy {
       next: (data : any) => {
         if(data.isDoctor == undefined)
         {
-          this.user.next(undefined);
+          this.userContainer.user.next(undefined);
           this.messagingHub.Disconnect();
         }
         else if(data.isDoctor) {
-          this.user.next(new SuperUser(data as Doctor));
+          this.userContainer.user.next(new SuperUser(data as Doctor));
           this.isDoctor.next(true);
           this.messagingHub.Connect();
         }
         else {
-          this.user.next(new SuperUser(data as Patient));
+          this.userContainer.user.next(new SuperUser(data as Patient));
           this.isDoctor.next(false);
           this.messagingHub.Connect();
         }
@@ -73,16 +73,16 @@ export class UserService implements OnDestroy {
         next: (data) => {
           if(data.isDoctor == undefined)
           {
-            this.user.next(undefined);
+            this.userContainer.user.next(undefined);
             this.messagingHub.Disconnect();
           }
           else if(data.isDoctor) {
-            this.user.next(new SuperUser(data as Doctor));
+            this.userContainer.user.next(new SuperUser(data as Doctor));
             this.isDoctor.next(true);
             this.messagingHub.Connect();
           }
           else {
-            this.user.next(new SuperUser(data as Patient));
+            this.userContainer.user.next(new SuperUser(data as Patient));
             this.isDoctor.next(false);
             this.messagingHub.Connect();
           }
@@ -137,7 +137,7 @@ export class UserService implements OnDestroy {
 
   logout() {
     localStorage.removeItem(tokenKey);
-    this.user.next(undefined);
+    this.userContainer.user.next(undefined);
     this.router.navigate([""]);
   }
 

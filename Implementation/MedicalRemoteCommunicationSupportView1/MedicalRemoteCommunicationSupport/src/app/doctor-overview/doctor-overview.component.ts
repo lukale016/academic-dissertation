@@ -1,3 +1,5 @@
+import { UserContainerService } from './../container/userContainer/user-container.service';
+import { MessagingHubService } from './../hubs/messaging/messaging.hub.service';
 import { Router } from '@angular/router';
 import { Doctor } from 'src/app/models/Doctor';
 import { environment } from './../../environments/environment';
@@ -27,10 +29,12 @@ export class DoctorOverviewComponent implements OnInit, OnDestroy {
   @ViewChild("chatContainer") chatContainer?: MatDrawer;
 
   constructor(private userService: UserService,
-    private changeDetector: ChangeDetectorRef) { }
+    private userContainer: UserContainerService,
+    private changeDetector: ChangeDetectorRef,
+    private messageHub: MessagingHubService) { }
   
   ngOnInit(): void {
-    this.userService.$user.pipe(takeUntil(this.$destroy))
+    this.userContainer.$user.pipe(takeUntil(this.$destroy))
       .subscribe((user: SuperUser | undefined) => {
         if(!user)
           this.userService.loadUserByToken();
@@ -59,6 +63,16 @@ export class DoctorOverviewComponent implements OnInit, OnDestroy {
 
   logout() {
     this.userService.logout();
+  }
+
+  sendRequest(doctor: string) {
+    this.messageHub.sendRequest(doctor);
+  }
+
+  alreadySentOrAccepted(doctor: string): boolean {
+    let sent = this.user?.sentRequests.filter(req => req == doctor);
+    let accepted = this.user?.myDoctors.filter(doc => doc.username == doctor);
+    return sent?.length != 0 || accepted?.length != 0;
   }
 
   private onlyUnique(value: any, index: number, self: any) {

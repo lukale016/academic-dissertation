@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Handlers;
 
-public class RequestAcceptedHandler : IHandler<string, MyConnection>
+public class RequestAcceptedHandler : IHandler<string, (string patientFullName, MyConnection connection)>
 {
     private readonly ConnectionMultiplexer redis;
     private readonly UnitOfWork unitOfWork;
@@ -15,7 +15,7 @@ public class RequestAcceptedHandler : IHandler<string, MyConnection>
         this.unitOfWork = unit;
     }
 
-    public async Task<MyConnection> Handle(string handled, params object[] additionalParams)
+    public async Task<(string patientFullName, MyConnection connection)> Handle(string handled, params object[] additionalParams)
     {
         Guard.Against.NullOrEmpty(handled, nameof(handled));
         Guard.Against.NullOrEmpty<object>(additionalParams, nameof(additionalParams));
@@ -23,8 +23,8 @@ public class RequestAcceptedHandler : IHandler<string, MyConnection>
         if (additionalParams[0] is not string)
             throw new ArgumentException($"{nameof(RequestAcceptedHandler)} needs patient username as additional parameter", nameof(additionalParams));
 
-        Doctor doctor = await unitOfWork.DoctorRepository.GetUser(handled);
-        Patient patient = await unitOfWork.PatientRepository.GetUser(additionalParams[0] as string);
+        Doctor doctor = await unitOfWork.DoctorRepository.GetUser(additionalParams[0] as string);
+        Patient patient = await unitOfWork.PatientRepository.GetUser(handled);
 
         IDatabase db = redis.GetDatabase();
 
@@ -32,11 +32,11 @@ public class RequestAcceptedHandler : IHandler<string, MyConnection>
         var doctorConnection = new MyConnection { Username = patient.Username, FullName = patient.FullName };
 
         await db.ListLeftPushAsync(doctor.PatientListKey,
-            JsonSerializer.Serialize<MyConnection>(patientConnection));
-
-        await db.ListLeftPushAsync(patient.MyDoctorsListKey,
             JsonSerializer.Serialize<MyConnection>(doctorConnection));
 
-        return patientConnection;
+        await db.ListLeftPushAsync(patient.MyDoctorsListKey,
+            JsonSerializer.Serialize<MyConnection>(patientConnection));
+
+        return (patient.FullName, patientConnection);
     }
 }
