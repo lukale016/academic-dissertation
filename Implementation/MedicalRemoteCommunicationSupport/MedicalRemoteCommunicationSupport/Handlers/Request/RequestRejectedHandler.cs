@@ -26,9 +26,10 @@ public class RequestRejectedHandler : IHandler<string, RequestRejectionData>
         Doctor doctor = await unitOfWork.DoctorRepository.GetUser(additionalParams[0] as string);
 
         IDatabase db = redis.GetDatabase();
-        await db.ListRemoveAsync(patient.SentRequestsListKey, doctor.Username);
-        await db.ListRemoveAsync(doctor.RequestListKey, JsonSerializer.Serialize<RequestDto>(
-            new RequestDto { Username = patient.Username, FullName = patient.FullName }));
+        await db.ListRemoveAsync(patient.SentRequestsListKey, JsonSerializer.Serialize<PatientRequestDto>(
+            new PatientRequestDto { Username = doctor.Username, Specialization = doctor.Specialization }));
+        await db.ListRemoveAsync(doctor.RequestListKey, JsonSerializer.Serialize<DoctorRequestDto>(
+            new DoctorRequestDto { Username = patient.Username, FullName = patient.FullName }));
 
         return new RequestRejectionData { RejectedUsername = patient.Username, DoctorFullName = doctor.FullName };
     }

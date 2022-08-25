@@ -14,30 +14,26 @@ public class Appointment
     [DataMember]
     public string DoctorRef { get; set; }
 
-    [BsonIgnore]
+    [DataMember]
     public Doctor Doctor { get; set; }
 
     [DataMember]
     public string PatientRef { get; set; }
 
-    [BsonIgnore]
+    [DataMember]
     public Patient Patient { get; set; }
 
     [DataMember]
-    public DateTime ScheduledDate { get; set; }
+    public DateTime ScheduledTime { get; set; }
 
     [DataMember]
-    public DateTime ScheduledTimeStart { get; set; }
-
-    [DataMember]
-    public DateTime ScheduledTimeEnd { get; set; }
+    public int LengthInMins { get; set; }
 
     public Appointment(AppointmentPostDto dto)
     {
         DoctorRef = dto.Doctor;
         PatientRef = dto.Patient;
-        ScheduledDate = dto.StartTime.Date;
-        ScheduledTimeStart = default(DateTime).Add(dto.StartTime.TimeOfDay);
-        ScheduledTimeEnd = default(DateTime).Add(dto.EndTime.TimeOfDay);
+        ScheduledTime = dto.ScheduledTime;
+        LengthInMins = dto.Duration;
     }
 }

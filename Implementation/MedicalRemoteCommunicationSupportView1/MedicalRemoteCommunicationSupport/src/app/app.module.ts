@@ -32,6 +32,7 @@ import { ChatComponent } from './home/chat/chat/chat.component';
 import { TopicComponent } from './topic/topic/topic.component';
 import { AddTopicDialogComponent } from './home/add-topic-dialog/add-topic-dialog.component';
 import { DoctorOverviewComponent } from './doctor-overview/doctor-overview.component';
+import { AppointmentsComponent } from './appointments/appointments.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { DoctorOverviewComponent } from './doctor-overview/doctor-overview.compo
     TopicComponent,
     AddTopicDialogComponent,
     DoctorOverviewComponent,
+    AppointmentsComponent,
   ],
   imports: [
     BrowserModule,

@@ -8,6 +8,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions, IHubProtocol, LogLevel } from '@microsoft/signalr';
 import { Message } from 'src/app/Dtos/Message';
 import * as signalR from '@microsoft/signalr';
+import { DateTime } from 'luxon'
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +49,7 @@ export class MessagingHubService implements OnDestroy {
   }
 
   private registerListeners() {
-    this.connection?.on("receiveMessage", (from: string, content: string, timeSent: Date) => {
+    this.connection?.on("receiveMessage", (from: string, content: string, timeSent: string) => {
       if(!from)
         return;
       this.messages.next(new Message(from, content, timeSent));
@@ -62,17 +63,17 @@ export class MessagingHubService implements OnDestroy {
       this.snack.open(`${fullName} wants to be your patient.`, "ok", { duration: 2000 });
     });
 
-    this.connection?.on("requestSent", (doctor: string) => {
+    this.connection?.on("requestSent", (doctor: string, specialization: string) => {
       if(!this.user)
         return;
-      this.user.sentRequests.push(doctor);
+      this.user.sentRequests.push({ username: doctor, specialization });
       this.userContainer.user.next(this.user);
     });
 
     this.connection?.on("requestFinished", (doctor: string, fullName: string) => {
       if(!this.user)
         return;
-      this.user.sentRequests = this.user.sentRequests.filter(req => req != doctor);
+      this.user.sentRequests = this.user.sentRequests.filter(req => req.username != doctor);
       this.user.patients.push({ username: doctor, fullName });
       this.userContainer.user.next(this.user);
       this.snack.open(`${fullName} accepted you as his patient.`, "ok", { duration: 2000 });
@@ -89,7 +90,7 @@ export class MessagingHubService implements OnDestroy {
     this.connection?.on("requestHasBeenRejected", (doctor: string, fullName: string) => {
       if(!this.user)
         return;
-      this.user.sentRequests = this.user.sentRequests.filter(req => req != doctor);
+      this.user.sentRequests = this.user.sentRequests.filter(req => req.username != doctor);
       this.userContainer.user.next(this.user);
       this.snack.open(`${fullName} has rejected your request.`, "ok", { duration: 2000 });
     });

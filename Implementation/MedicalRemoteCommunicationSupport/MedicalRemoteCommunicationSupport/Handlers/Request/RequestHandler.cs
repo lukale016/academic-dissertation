@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Handlers;
 
-public class RequestHandler : IHandler<string, RequestDto>
+public class RequestHandler : IHandler<string, (DoctorRequestDto request, string specialization)>
 {
     private readonly ConnectionMultiplexer redis;
     private readonly UnitOfWork unitOfWork;
@@ -15,7 +15,7 @@ public class RequestHandler : IHandler<string, RequestDto>
         this.unitOfWork = unit;
     }
 
-    public async Task<RequestDto> Handle(string handled, params object[] additionalParams)
+    public async Task<(DoctorRequestDto request, string specialization)> Handle(string handled, params object[] additionalParams)
     {
         Guard.Against.NullOrEmpty<object>(additionalParams, nameof(additionalParams));
         Guard.Against.NullOrWhiteSpace(handled, nameof(handled));
@@ -27,12 +27,13 @@ public class RequestHandler : IHandler<string, RequestDto>
         Patient patient = await unitOfWork.PatientRepository.GetUser(senderUsername);
         Doctor doctor = await unitOfWork.DoctorRepository.GetUser(handled);
 
-        var doctorRequest = new RequestDto { Username = patient.Username, FullName = patient.FullName };
+        var doctorRequest = new DoctorRequestDto { Username = patient.Username, FullName = patient.FullName };
+        var patientRequest = new PatientRequestDto { Username = doctor.Username, Specialization = doctor.Specialization };
 
         IDatabase db = redis.GetDatabase();
-        await db.ListLeftPushAsync(patient.SentRequestsListKey, doctor.Username);
-        await db.ListLeftPushAsync(doctor.RequestListKey, JsonSerializer.Serialize<RequestDto>(doctorRequest));
+        await db.ListLeftPushAsync(patient.SentRequestsListKey, JsonSerializer.Serialize<PatientRequestDto>(patientRequest));
+        await db.ListLeftPushAsync(doctor.RequestListKey, JsonSerializer.Serialize<DoctorRequestDto>(doctorRequest));
 
-        return doctorRequest;
+        return (doctorRequest, doctor.Specialization);
     }
 }

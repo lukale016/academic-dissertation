@@ -1,19 +1,53 @@
-<mat-expansion-panel (afterExpand)="newMessages = false">
+<mat-expansion-panel matBadge="." 
+[matBadgeHidden]="!newMessages" 
+matBadgeColor="warn" 
+class="shortenSize" 
+(opened)="chatOpened()"
+(closed)="chatClosed()">
     <mat-expansion-panel-header>
         <mat-panel-title>
             {{ chatTitle }}
         </mat-panel-title>
     </mat-expansion-panel-header>
     <div class="flexVertical fillParent">
-        <div class="chat">
+        <div #chat class="chat">
             <div class="flexVertical" *ngFor="let message of messages">
-                <p *ngIf="message.fromCurrent" class="selfAlignEnd message">{{ message.message }}</p>
-                <p *ngIf="!message.fromCurrent" class="message">{{ message.message }}</p>
+                <p *ngIf="message.fromCurrent && message.fileHref == ''"
+                [matTooltip]="formatTimeSent(message.timestamp)"
+                matTooltipPosition="left"
+                class="selfAlignEnd message">
+                    {{ message.message }}
+                </p>
+                <p *ngIf="!message.fromCurrent && message.fileHref == ''"
+                [matTooltip]="formatTimeSent(message.timestamp)"
+                matTooltipPosition="right"
+                class="message">
+                    {{ message.message }}
+                </p>
+                <!-- File messages -->
+                <a *ngIf="message.fromCurrent && message.fileHref != ''"
+                [href]="message.fileHref"
+                download
+                [matTooltip]="formatTimeSent(message.timestamp)"
+                matTooltipPosition="left"
+                class="selfAlignEnd message">
+                    {{ message.message }}
+                </a>
+                <a *ngIf="!message.fromCurrent && message.fileHref != ''"
+                [href]="message.fileHref"
+                download
+                [matTooltip]="formatTimeSent(message.timestamp)"
+                matTooltipPosition="right"
+                class="message">
+                    {{ message.message }}
+                </a>
             </div>
         </div>
         <div class="flex centerContent">
+            <button mat-icon-button (click)="fileUpload.click()"><mat-icon color="primary">attach_file</mat-icon></button>
+            <input #fileUpload class="fileInput" (change)="onFileSelected($event)" type="file" />
             <mat-form-field class="fillParentWidth">
-                <input [(ngModel)]="messageContent" type="text" matInput>
+                <input [(ngModel)]="messageContent" (keyup.enter)="sendMessage()" type="text" matInput>
             </mat-form-field>
             <button (click)="sendMessage()" mat-icon-button><mat-icon color="primary">send</mat-icon></button>
         </div>

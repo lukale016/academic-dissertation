@@ -37,6 +37,11 @@ public class RequestAcceptedHandler : IHandler<string, (string patientFullName, 
         await db.ListLeftPushAsync(patient.MyDoctorsListKey,
             JsonSerializer.Serialize<MyConnection>(patientConnection));
 
+        await db.ListRemoveAsync(patient.SentRequestsListKey, JsonSerializer.Serialize<PatientRequestDto>(
+            new PatientRequestDto { Username = doctor.Username, Specialization = doctor.Specialization }));
+        await db.ListRemoveAsync(doctor.RequestListKey, JsonSerializer.Serialize<DoctorRequestDto>(
+            new DoctorRequestDto { Username = patient.Username, FullName = patient.FullName }));
+
         return (patient.FullName, patientConnection);
     }
 }

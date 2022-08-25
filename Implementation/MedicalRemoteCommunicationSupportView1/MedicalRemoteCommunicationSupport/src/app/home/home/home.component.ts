@@ -1,7 +1,6 @@
 import { MessagingHubService } from './../../hubs/messaging/messaging.hub.service';
 import { UserContainerService } from './../../container/userContainer/user-container.service';
-import { Router } from '@angular/router';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ModelValidator } from './../../helpers/ModelValidator';
 import { AddTopicDialogComponent } from './../add-topic-dialog/add-topic-dialog.component';
 import { environment } from './../../../environments/environment';
@@ -30,6 +29,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public topicSlice: Topic[] = [];
   public autocompleteOptions: string[] = this.topics.map((t: Topic) => t.title);
   public searchValue: FormControl = new FormControl("");
+  public showBadge = false;
   @ViewChild("chatContainer") chatContainer?: MatDrawer;
 
   @ViewChild(MatPaginator) topicPages!: MatPaginator
@@ -107,6 +107,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                        .subscribe((newTopic: Topic) => {
                           this.snack.open("Added new topic", "close", { duration: 2000 }); 
                           this.topics.unshift(newTopic);
+                          this.user?.createdTopics.unshift(newTopic);
                           this._filterTopics(this.searchValue.value);
                        });
     });
@@ -122,6 +123,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   
   rejectRequest(patient: string) {
     this.messageHub.rejectRequest(patient);
+  }
+
+  messageArrived() {
+    this.showBadge = true;
+  }
+
+  openChats() {
+    this.chatContainer?.toggle();
+    this.showBadge = false;
   }
 
   ngOnDestroy(): void {

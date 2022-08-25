@@ -13,7 +13,7 @@ public class Doctor : UserBase
     public string RequestListKey => $"Requests:{Username}";
 
     [BsonIgnore]
-    public IEnumerable<RequestDto> Requests { get; set; }
+    public IEnumerable<DoctorRequestDto> Requests { get; set; }
 
     [BsonIgnore]
     public string PatientListKey => $"Patients:{Username}";

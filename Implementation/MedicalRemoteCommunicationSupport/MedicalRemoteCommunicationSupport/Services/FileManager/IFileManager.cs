@@ -3,6 +3,6 @@
 public interface IFileManager
 {
     Task<HttpFileData> GetFile(string fileName);
-    Task SaveFile(IFormFile file);
+    Task<FileGuid> SaveFile(IFormFile file);
     void DeleteFile(string fileName);
 }

@@ -16,11 +16,12 @@ import { DoctorCriteria } from 'src/criterias/doctorCriteria';
   styleUrls: ['./doctor-overview.component.css']
 })
 export class DoctorOverviewComponent implements OnInit, OnDestroy {
-  appName: string = environment.appName;
-  user?: SuperUser;
-  doctors: Doctor[] = [];
-  criteriaBind: DoctorCriteria = new DoctorCriteria();
-  specializations: string[] = [];
+  public appName: string = environment.appName;
+  public user?: SuperUser;
+  public doctors: Doctor[] = [];
+  public criteriaBind: DoctorCriteria = new DoctorCriteria();
+  public specializations: string[] = [];
+  public showBadge: boolean = false;
   private criteria: BehaviorSubject<DoctorCriteria> = new BehaviorSubject<DoctorCriteria>(this.criteriaBind);
   private $criteria = this.criteria.asObservable();
 
@@ -69,14 +70,32 @@ export class DoctorOverviewComponent implements OnInit, OnDestroy {
     this.messageHub.sendRequest(doctor);
   }
 
-  alreadySentOrAccepted(doctor: string): boolean {
-    let sent = this.user?.sentRequests.filter(req => req == doctor);
+  alreadySentOrAccepted(doctor: string, specialization: string): boolean {
+    let sent = this.user?.sentRequests.filter(req => req.username == doctor || req.specialization == specialization);
     let accepted = this.user?.myDoctors.filter(doc => doc.username == doctor);
-    return sent?.length != 0 || accepted?.length != 0;
+    let myDoctors = this.doctors.filter(doc => this.user?.myDoctors.map(myDoc => myDoc.username).includes(doc.username));
+    return sent?.length != 0 || accepted?.length != 0 || myDoctors.map(myDoc => myDoc.specialization).includes(specialization);
   }
 
   private onlyUnique(value: any, index: number, self: any) {
     return self.indexOf(value) === index;
+  }
+
+  messageArrived() {
+    this.showBadge = true;
+  }
+
+  acceptRequest(patient: string) {
+    this.messageHub.acceptRequest(patient);
+  }
+  
+  rejectRequest(patient: string) {
+    this.messageHub.rejectRequest(patient);
+  }
+
+  openChats() {
+    this.chatContainer?.toggle();
+    this.showBadge = false;
   }
 
   ngOnDestroy(): void {

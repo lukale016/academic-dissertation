@@ -14,7 +14,7 @@ export class Patient {
     appointments: Appointment[];
     messageListPriority: string[];
     createdTopics: Topic[];
-    sentRequests: string[]
+    sentRequests: {username: string, specialization: string}[]
     myDoctors: {username: string, fullName: string}[];
 
     /**

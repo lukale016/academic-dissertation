@@ -1,48 +1,57 @@
+import { Patient } from 'src/app/models/Patient';
+import { Doctor } from 'src/app/models/Doctor';
 export class Appointment {
-    doctor: string;
-    patient: string;
-    date: Date;
-    startTime: Date;
-    endTime: Date;
+    id?: number;
+    doctorRef: string;
+    doctor: Doctor;
+    patientRef: string;
+    patient: Patient;
+    scheduledTime: Date;
+    lengthInMins: number;
 
     /**
      * @summary One arg copy ctor
-     * @summary 3 args: owner, description, isDoctorComment
+     * @summary 4 args: doctor username, patient username, scheduled time, duration
      */
      constructor(...args: any[]) {
         if(args.length == 0)
         {
-            this.doctor = "";
-            this.patient = "";
-            this.date = new Date();
-            this.startTime = new Date();
-            this.endTime = new Date();
+            this.doctor = new Doctor();
+            this.doctorRef = "";
+            this.patient = new Patient();
+            this.patientRef = "";
+            this.scheduledTime = new Date();
+            this.lengthInMins = 0;
             return;
         }
         if(args.length == 1)
         {
             let appointment : Appointment = args[0] as Appointment;
+            this.id = appointment.id;
             this.doctor = appointment.doctor;
+            this.doctorRef = appointment.doctorRef;
             this.patient = appointment.patient;
-            this.date = appointment.date;
-            this.startTime = appointment.startTime;
-            this.endTime = appointment.endTime;
+            this.patientRef = appointment.patientRef;
+            this.scheduledTime = appointment.scheduledTime;
+            this.lengthInMins = appointment.lengthInMins;
             return;
         }
-        if(args.length == 5)
+        if(args.length == 4)
         {
-            this.doctor = args[0] as string;
-            this.patient = args[1] as string;
-            this.date = args[2] as Date;
-            this.startTime = args[3] as Date;
-            this.endTime = args[4] as Date;
+            this.doctor = new Doctor();
+            this.doctorRef = args[0] as string;
+            this.patient = new Patient();
+            this.patientRef = args[1] as string;
+            this.scheduledTime = args[2] as Date;
+            this.lengthInMins = args[3] as number;
             return;
         }
         console.log("Something went wrong in appointment ctor");
-        this.doctor = "";
-        this.patient = "";
-        this.date = new Date();
-        this.startTime = new Date();
-        this.endTime = new Date();
+        this.doctor = new Doctor();
+        this.doctorRef = "";
+        this.patient = new Patient();
+        this.patientRef = "";
+        this.scheduledTime = new Date();
+        this.lengthInMins = 0;
     }
 }

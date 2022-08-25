@@ -15,12 +15,13 @@ public class FileController : Controller
         this.fileManager = manager;
     }
 
-    [HttpGet("{fileName}")]
-    public async Task<ActionResult> GetFile([FromRoute]string fileName)
+    [AllowAnonymous]
+    [HttpGet("{fileGuid}")]
+    public async Task<ActionResult> GetFile([FromRoute]string fileGuid)
     {
         try
         {
-            HttpFileData file = await fileManager.GetFile(fileName);
+            HttpFileData file = await fileManager.GetFile(fileGuid);
             return File(file.Data, file.ContentType, file.Name);
         }
         catch(ResponseException ex)
@@ -30,12 +31,11 @@ public class FileController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> StoreFile([FromForm]IFormFile file)
+    public async Task<ActionResult<FileGuid>> StoreFile([FromForm]IFormFile file)
     {
         try
         {
-            await fileManager.SaveFile(file);
-            return Ok("File stored");
+            return await fileManager.SaveFile(file);
         }
         catch (ResponseException ex)
         {

@@ -10,13 +10,13 @@ public class MessagingHub: Hub<IClientMethods>
 {
     private readonly IConnectionManager connectionManager;
     private readonly IHandler<Message, Message> messageHandler;
-    private readonly IHandler<string, RequestDto> requestHandler;
+    private readonly IHandler<string, (DoctorRequestDto request, string specialization)> requestHandler;
     private readonly IHandler<string, (string patientFullName, MyConnection connection)> requestAcceptedHandler;
     private readonly IHandler<string, RequestRejectionData> requestRejectedHandler;
 
     public MessagingHub(IConnectionManager connectionManager,
         IHandler<Message, Message> messageHandler,
-        IHandler<string,RequestDto> requestHandler,
+        IHandler<string, (DoctorRequestDto request, string specialization)> requestHandler,
         IHandler<string, (string patientFullName, MyConnection connection)> requestAcceptedHandler,
         IHandler<string, RequestRejectionData> requestRejectedHandler)
     {
@@ -52,10 +52,10 @@ public class MessagingHub: Hub<IClientMethods>
     [HubMethodName("sendRequest")]
     public async Task SendRequest(string doctor)
     {
-        var request = await requestHandler.Handle(doctor, new[] { Context.UserIdentifier });
+        var data = await requestHandler.Handle(doctor, new[] { Context.UserIdentifier });
         if (await connectionManager.GetConnectionId(doctor) is string connectionId && connectionId != string.Empty)
-            await Clients.Client(connectionId).RequestReceived(request.Username, request.FullName);
-        await Clients.Caller.RequestSent(doctor);
+            await Clients.Client(connectionId).RequestReceived(data.request.Username, data.request.FullName);
+        await Clients.Caller.RequestSent(doctor, data.specialization);
     }
 
     [HubMethodName("acceptRequest")]

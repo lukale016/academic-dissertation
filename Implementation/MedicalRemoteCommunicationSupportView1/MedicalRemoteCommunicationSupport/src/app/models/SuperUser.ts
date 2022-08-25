@@ -19,7 +19,7 @@ export class SuperUser {
     endTime: string;
     messageListPriority: string[];
     createdTopics: Topic[];
-    sentRequests: string[];
+    sentRequests: {username: string, specialization: string}[];
     requests: {username: string, fullName: string}[];
     patients: {username: string, fullName: string}[];
     myDoctors: {username: string, fullName: string}[];

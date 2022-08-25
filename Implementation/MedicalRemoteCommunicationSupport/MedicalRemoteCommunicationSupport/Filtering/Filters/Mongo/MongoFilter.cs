@@ -2,7 +2,7 @@
 
 namespace MedicalRemoteCommunicationSupport.Filtering;
 
-public class MongoFilter<T, Q> : IMongoFilter<T, Q> where Q : ICriteria<T>
+public class MongoFilter<T, Q> : IMongoFilter<T, Q> where Q : IMongoCriteria<T>
 {
     private IMongoCollection<T> collection;
     public MongoFilter(IMongoDatabase mongo)

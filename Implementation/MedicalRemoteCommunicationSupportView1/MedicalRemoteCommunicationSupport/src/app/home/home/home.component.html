@@ -14,7 +14,8 @@
         >
       </mat-action-list>
       <mat-action-list *ngIf="user">
-        <mat-list-item (click)="logout()">Logout</mat-list-item>
+        <mat-list-item class="warn" (click)="logout()">Logout</mat-list-item>
+        <mat-list-item routerLink="appointments">Appointments</mat-list-item>
       </mat-action-list>
       <ng-container *ngIf="user && !user.isDoctor">
         <mat-action-list>
@@ -55,10 +56,10 @@
       <button
         *ngIf="user && chatContainer"
         mat-icon-button
-        (click)="chatContainer.toggle()"
+        (click)="openChats()"
         aria-label="icon-button with add icon"
       >
-        <mat-icon>chat_bubble_outline</mat-icon>
+        <mat-icon matBadge="." matBadgeColor="warn" [matBadgeHidden]="!showBadge">chat_bubble_outline</mat-icon>
       </button>
     </mat-toolbar>
   </p>
@@ -92,7 +93,7 @@
         </button>
       </div>
       <div>
-        <button mat-raised-button color="primary" (click)="openAddTopicDialog()">Add topic</button>
+        <button mat-raised-button *ngIf="user && !user.isDoctor" color="primary" (click)="openAddTopicDialog()">Add topic</button>
       </div>
     </form>
     <div class="flexVertical fillParent topicItem">
@@ -120,10 +121,18 @@
       <h2>Chat</h2>
       <mat-accordion class="fillParent" multi>
       <ng-container *ngIf="!user.isDoctor">
-        <app-chat *ngFor="let chat of user.myDoctors" [chatUsername]="chat.username" [chatTitle]="chat.fullName" [user]="user"></app-chat>
+        <app-chat *ngFor="let chat of user.myDoctors"
+        [chatUsername]="chat.username"
+        [chatTitle]="chat.fullName"
+        [user]="user"
+        (notificationEvent)="messageArrived()"></app-chat>
       </ng-container>
       <ng-container *ngIf="user.isDoctor">
-        <app-chat *ngFor="let chat of user.patients" [chatUsername]="chat.username" [chatTitle]="chat.fullName" [user]="user"></app-chat>
+        <app-chat *ngFor="let chat of user.patients"
+        [chatUsername]="chat.username"
+        [chatTitle]="chat.fullName"
+        [user]="user"
+        (notificationEvent)="messageArrived()"></app-chat>
       </ng-container>
       </mat-accordion>
     </div>

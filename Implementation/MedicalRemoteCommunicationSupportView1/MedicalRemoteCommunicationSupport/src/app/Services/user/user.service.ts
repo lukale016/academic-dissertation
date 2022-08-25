@@ -100,10 +100,14 @@ export class UserService implements OnDestroy {
 
   addUser(data: DoctroPostDto | PatientPostDto) {
     if(data instanceof PatientPostDto) {
-      this.client.post<string>(`${this.rootRoute}AddPatient`, data as PatientPostDto, { headers: this.getDefaultHeaders() })
+      this.client.post(`${this.rootRoute}AddPatient`, data as PatientPostDto, { 
+        headers: this.getDefaultHeaders(),
+        responseType: "text" 
+      })
         .pipe(takeUntil(this.$destroy))
         .subscribe({
-          next: data => { 
+          next: data => {
+            console.log(data) 
             this.snack.open(data, "close", { duration: 2000 }); 
             this.router.navigate(['login']);
           }, 
@@ -113,10 +117,14 @@ export class UserService implements OnDestroy {
       });
     }
     else {
-      this.client.post<string>(`${this.rootRoute}AddDoctor`, data as DoctroPostDto, { headers: this.getDefaultHeaders()})
+      this.client.post(`${this.rootRoute}AddDoctor`, data as DoctroPostDto, { 
+        headers: this.getDefaultHeaders(),
+        responseType: "text"
+      })
         .pipe(takeUntil(this.$destroy))
         .subscribe({
           next: data => { 
+            console.log(data)
             this.snack.open(data, "close", { duration: 2000 });
             this.router.navigate(['login']);
           }, 

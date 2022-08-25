@@ -20,7 +20,7 @@ public class TopicController : Controller
     {
         try
         {
-            return new JsonResult(await unitOfWork.TopicRepostiory.GetAllTopics());
+            return new JsonResult(await unitOfWork.TopicRepository.GetAllTopics());
         }
         catch (ResponseException ex)
         {
@@ -34,7 +34,7 @@ public class TopicController : Controller
     {
         try
         {
-            return await unitOfWork.TopicRepostiory.GetTopic(id);
+            return await unitOfWork.TopicRepository.GetTopic(id);
         }
         catch (ResponseException ex)
         {
@@ -47,7 +47,7 @@ public class TopicController : Controller
     {
         try
         {
-            return await unitOfWork.TopicRepostiory.AddTopic(topic);
+            return await unitOfWork.TopicRepository.AddTopic(topic);
         }
         catch (ResponseException ex)
         {
@@ -60,7 +60,7 @@ public class TopicController : Controller
     {
         try
         {
-            return await unitOfWork.TopicRepostiory.UpdateTopic(topic);
+            return await unitOfWork.TopicRepository.UpdateTopic(topic);
         }
         catch (ResponseException ex)
         {
@@ -73,7 +73,7 @@ public class TopicController : Controller
     {
         try
         {
-            return await unitOfWork.TopicRepostiory.DeleteTopic(id);
+            return await unitOfWork.TopicRepository.DeleteTopic(id);
         }
         catch (ResponseException ex)
         {

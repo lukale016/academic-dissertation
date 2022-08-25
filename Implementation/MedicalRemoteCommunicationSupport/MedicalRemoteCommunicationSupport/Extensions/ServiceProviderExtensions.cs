@@ -1,4 +1,5 @@
-﻿using MedicalRemoteCommunicationSupport.Services;
+﻿using MedicalRemoteCommunicationSupport.Helpers;
+using MedicalRemoteCommunicationSupport.Services;
 using MongoDB.Driver;
 using StackExchange.Redis;
 
@@ -14,6 +15,7 @@ public static class ServiceProviderExtensions
         services.AddSingleton<ConnectionMultiplexer>(ConnectionMultiplexer.Connect(dbSettings["RedisConnectionUrl"]));
         services.AddSingleton<MongoClient>(new MongoClient(dbSettings["MongoConnectionUrl"]));
         services.AddSingleton<IConnectionManager, ConnectionManager>();
+        services.AddSingleton<IFilterHelper, FilterHelper>();
         return services; 
     }
 }

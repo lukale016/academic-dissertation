@@ -36,7 +36,7 @@ public class CommentRepository : ICommentRepository
 
         comment.UserFullName = user.FullName;
 
-        Topic topic = await unitOfWork.TopicRepostiory.GetTopic(id);
+        Topic topic = await unitOfWork.TopicRepository.GetTopic(id);
 
         await redis.GetDatabase().ListLeftPushAsync(topic.CommentsKey, JsonSerializer.Serialize<Comment>(comment));
         return comment;
@@ -49,7 +49,7 @@ public class CommentRepository : ICommentRepository
             throw new ResponseException(StatusCodes.Status400BadRequest, "Parameters not set");
         }
 
-        Topic topic = await unitOfWork.TopicRepostiory.GetTopic(id);
+        Topic topic = await unitOfWork.TopicRepository.GetTopic(id);
 
         IDatabase db = redis.GetDatabase();
         List<Comment> comments = (await db.ListRangeAsync(topic.CommentsKey))

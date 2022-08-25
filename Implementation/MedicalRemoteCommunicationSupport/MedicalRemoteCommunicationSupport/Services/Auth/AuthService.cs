@@ -52,8 +52,6 @@ public class AuthService : IAuthService
                 throw;
             }
         }
-
-        return null;
     }
 
     private string BuildToken(UserBase user)

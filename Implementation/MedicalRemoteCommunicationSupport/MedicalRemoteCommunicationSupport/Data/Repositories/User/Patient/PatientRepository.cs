@@ -1,4 +1,5 @@
 ﻿using MedicalRemoteCommunicationSupport.Filtering;
+using MedicalRemoteCommunicationSupport.Helpers;
 using MongoDB.Driver;
 using StackExchange.Redis;
 using System.Text.Json;
@@ -10,12 +11,14 @@ public class PatientRepository : UserRepository<Patient>, IPatientRepository
     private readonly IConnectionMultiplexer redis;
     private IMongoCollection<Topic> topics;
     private readonly UnitOfWork unitOfWork;
+    private IFilterHelper filter;
 
-    public PatientRepository(UnitOfWork unit, IMongoDatabase mongoDb, IConnectionMultiplexer redis): base(mongoDb)
+    public PatientRepository(UnitOfWork unit, IMongoDatabase mongoDb, IConnectionMultiplexer redis, IFilterHelper filter): base(mongoDb)
     {
         this.unitOfWork = unit;
         this.redis = redis;
         this.topics = mongoDb.GetCollection<Topic>(CollectionConstants.Topics);
+        this.filter = filter;
     }
 
     public override async Task<Patient> GetUser(string username)
@@ -26,15 +29,15 @@ public class PatientRepository : UserRepository<Patient>, IPatientRepository
         List<int> createdIds = (await db.ListRangeAsync(patient.CreatedTopicsKey))
                                     .Select(rv => int.Parse(rv.ToString())).ToList();
         patient.CreatedTopics = (await topics.FindAsync(Builders<Topic>.Filter.Empty))
-                                        .ToList().Where(t => createdIds.Contains(t.Id)).ToList();
-        patient.SentRequests = (await db.ListRangeAsync(patient.SentRequestsListKey)).Select(rv => rv.ToString());
+                                        .ToList().Where(t => createdIds.Contains(t.Id)).Reverse<Topic>().ToList();
+        patient.SentRequests = (await db.ListRangeAsync(patient.SentRequestsListKey)).Select(rv => JsonSerializer.Deserialize<PatientRequestDto>(rv));
         patient.MyDoctors = (await db.ListRangeAsync(patient.MyDoctorsListKey)).Select(rv => JsonSerializer.Deserialize<MyConnection>(rv));
         return patient;
     }
 
-    public Task<IEnumerable<Patient>> Search(PatientCriteria criteria)
+    public async Task<IEnumerable<Patient>> Search(PatientCriteria criteria)
     {
-        return unitOfWork.ReturnMongoFiltrator<Patient, PatientCriteria>().Search(criteria);
+        return await filter.ReturnMongoFiltrator<Patient, PatientCriteria>().Search(criteria);
     }
 
     public Task<Patient> UpdatePatient(Patient patient)

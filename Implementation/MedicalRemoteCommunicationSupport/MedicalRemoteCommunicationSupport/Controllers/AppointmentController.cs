@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MedicalRemoteCommunicationSupport.Filtering;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MedicalRemoteCommunicationSupport.Controllers;
 
@@ -14,12 +16,27 @@ public class AppointmentController : Controller
         this.unitOfWork = unit;
     }
 
-    [HttpGet("{username}")]
-    public async Task<ActionResult<Dictionary<string, IEnumerable<Appointment>>>> GetAppointments([FromRoute]string username)
+    [HttpGet]
+    public async Task<ActionResult<Dictionary<string, IEnumerable<Appointment>>>> GetAppointments()
     {
+        string username = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).SingleOrDefault().Value;
         try
         {
             return new JsonResult(await unitOfWork.AppointmentRepository.GetAppointments(username));
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<string>>> OccupiedTimeSlots(string scheduledTime)
+    {
+        string username = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).SingleOrDefault().Value;
+        try
+        {
+            return new JsonResult((await unitOfWork.AppointmentRepository.OccupiedTimeSlots(username, scheduledTime)));
         }
         catch (ResponseException ex)
         {
@@ -46,6 +63,20 @@ public class AppointmentController : Controller
         try
         {
             return await unitOfWork.AppointmentRepository.DeleteAppointment(id);
+        }
+        catch (ResponseException ex)
+        {
+            return StatusCode(ex.Status, ex.Message);
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Dictionary<string, IEnumerable<Appointment>>>> Search([FromBody]AppointmentListCriteria criteria)
+    {
+        string username = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).SingleOrDefault().Value;
+        try
+        {
+            return await unitOfWork.AppointmentRepository.Search(username, criteria);
         }
         catch (ResponseException ex)
         {

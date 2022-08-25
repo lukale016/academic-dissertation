@@ -1,4 +1,8 @@
-﻿using MedicalRemoteCommunicationSupport.Services;
+﻿using System.Text;
+using Ardalis.GuardClauses;
+using MedicalRemoteCommunicationSupport.Filtering;
+using MedicalRemoteCommunicationSupport.Helpers;
+using MedicalRemoteCommunicationSupport.Services;
 using MongoDB.Driver;
 using StackExchange.Redis;
 
@@ -8,15 +12,15 @@ public class AppointmentRepository : IAppointmentRepository
 {
     private readonly UnitOfWork unitOfWork;
     private ConnectionMultiplexer redis;
-    private IMongoDatabase mongo;
     private IMongoCollection<Appointment> appointments;
+    private IFilterHelper filter;
 
-    public AppointmentRepository(UnitOfWork unit, IMongoDatabase mongo, ConnectionMultiplexer redis)
+    public AppointmentRepository(UnitOfWork unit, IMongoDatabase mongo, ConnectionMultiplexer redis, IFilterHelper filter)
     {
         this.unitOfWork = unit;
-        this.mongo = mongo;
         this.redis = redis;
         appointments = mongo.GetCollection<Appointment>(CollectionConstants.Appointments);
+        this.filter = filter;
     }
 
     public async Task<Dictionary<string, IEnumerable<Appointment>>> GetAppointments(string username)
@@ -51,7 +55,8 @@ public class AppointmentRepository : IAppointmentRepository
             result.Add(date, db.ListRange(RedisHelperService.BuildAppointmentKey(username, DateTime.Parse(date)))
                                .Select(rv => int.Parse(rv))
                                .Select(id => appointments.Find(Builders<Appointment>.Filter.Eq(nameof(Appointment.Id), id)).SingleOrDefault())
-                               .Where(ap => ap is not null));
+                               .Where(ap => ap is not null)
+                               .OrderBy(ap => ap.ScheduledTime));
         }
 
         return result;
@@ -69,13 +74,23 @@ public class AppointmentRepository : IAppointmentRepository
 
         appointment.Patient = await unitOfWork.PatientRepository.GetUser(dto.Patient);
         appointment.Doctor = await unitOfWork.DoctorRepository.GetUser(dto.Doctor);
+        if (await IsConflicted(appointment))
+        {
+            throw new ResponseException(StatusCodes.Status409Conflict, "Time slot for appointment is not available.");
+        }
+        
         await appointments.InsertOneAsync(appointment);
-
+        
+        var appointmentDateString = dto.ScheduledTime.ToShortDateString();
         IDatabase db = redis.GetDatabase();
-        await db.ListLeftPushAsync(RedisHelperService.BuildAppointmentKey(appointment.PatientRef, dto.Date.Date), appointment.Id);
-        await db.ListLeftPushAsync(RedisHelperService.BuildAppointmentKey(appointment.DoctorRef, dto.Date.Date), appointment.Id);
-        await db.ListLeftPushAsync(appointment.Patient.AppointmentDatesListKey, dto.Date.Date.ToString());
-        await db.ListLeftPushAsync(appointment.Doctor.AppointmentDatesListKey, dto.Date.Date.ToString());
+        await db.ListLeftPushAsync(RedisHelperService.BuildAppointmentKey(appointment.PatientRef, dto.ScheduledTime.Date), appointment.Id);
+        await db.ListLeftPushAsync(RedisHelperService.BuildAppointmentKey(appointment.DoctorRef, dto.ScheduledTime.Date), appointment.Id);
+        
+        await db.ListRemoveAsync(appointment.Patient.AppointmentDatesListKey, appointmentDateString);
+        await db.ListRemoveAsync(appointment.Doctor.AppointmentDatesListKey, appointmentDateString);
+        
+        await db.ListLeftPushAsync(appointment.Patient.AppointmentDatesListKey, appointmentDateString);
+        await db.ListLeftPushAsync(appointment.Doctor.AppointmentDatesListKey, appointmentDateString);
 
         return appointment;
     }
@@ -95,12 +110,145 @@ public class AppointmentRepository : IAppointmentRepository
             throw new ResponseException(StatusCodes.Status404NotFound, "Appointment not found");
         }
 
+        var appointmentDateString = appointment.ScheduledTime.ToShortDateString();
         IDatabase db = redis.GetDatabase();
-        await db.ListRemoveAsync(RedisHelperService.BuildAppointmentKey(appointment.PatientRef, appointment.ScheduledDate.Date), appointment.Id);
-        await db.ListRemoveAsync(RedisHelperService.BuildAppointmentKey(appointment.DoctorRef, appointment.ScheduledDate.Date), appointment.Id);
-        await db.ListRemoveAsync(appointment.Patient.AppointmentDatesListKey, appointment.ScheduledDate.Date.ToString());
-        await db.ListRemoveAsync(appointment.Doctor.AppointmentDatesListKey, appointment.ScheduledDate.Date.ToString());
+        await db.ListRemoveAsync(RedisHelperService.BuildAppointmentKey(appointment.PatientRef, appointment.ScheduledTime.Date), appointment.Id);
+        await db.ListRemoveAsync(RedisHelperService.BuildAppointmentKey(appointment.DoctorRef, appointment.ScheduledTime.Date), appointment.Id);
+        if(!(await db.ListRangeAsync(RedisHelperService.BuildAppointmentKey(appointment.PatientRef, appointment.ScheduledTime.Date))).Any())
+            await db.ListRemoveAsync(appointment.Patient.AppointmentDatesListKey, appointmentDateString);
+        if(!(await db.ListRangeAsync(RedisHelperService.BuildAppointmentKey(appointment.DoctorRef, appointment.ScheduledTime.Date))).Any())
+            await db.ListRemoveAsync(appointment.Doctor.AppointmentDatesListKey, appointmentDateString);
 
         return id;
     }
+
+    public async Task<Dictionary<string, IEnumerable<Appointment>>> Search(string username, AppointmentListCriteria? criteria)
+    {
+        Guard.Against.NullOrEmpty(username, nameof(username)); 
+        criteria ??= new AppointmentListCriteria();
+
+        var allAppointments = await GetAppointments(username);
+        var result = new Dictionary<string, IEnumerable<Appointment>>();
+
+        if (criteria.ScheduledTime != default)
+        {
+            IEnumerable<Appointment> appointments;
+            if (allAppointments.TryGetValue(criteria.ScheduledTime, out appointments))
+            {
+                var appointmentsForDate = filter.ReturnListFiltrator<Appointment, AppointmentListCriteria>()
+                    .Search(appointments, criteria);
+                if(appointmentsForDate.Any())
+                    result.Add(criteria.ScheduledTime, appointmentsForDate.OrderBy(ap => ap.ScheduledTime));
+                return result;
+            }
+            else
+            {
+                return new Dictionary<string, IEnumerable<Appointment>>();
+            }
+        }
+
+        foreach(var pair in allAppointments)
+        {
+            var appointmentsForDate = filter.ReturnListFiltrator<Appointment, AppointmentListCriteria>()
+                .Search(pair.Value, criteria);
+            if(appointmentsForDate.Any())
+                result.Add(pair.Key, appointmentsForDate);
+        }
+
+        return result;
+    }
+    
+    public async Task<IEnumerable<string>> OccupiedTimeSlots(string username, string scheduledTime)
+    {
+        var allDoctorAppointmentsForDate = await Search(username,
+            new AppointmentListCriteria { ScheduledTime = scheduledTime });
+
+        List<string> result = new();
+        try
+        {
+            var appointments = allDoctorAppointmentsForDate.Select(pair => pair.Value).SingleOrDefault();
+            if (appointments is null)
+            {
+                throw new ResponseException(StatusCodes.Status400BadRequest, "Impossible date");
+            }
+
+            appointments = appointments.OrderBy(a => a.ScheduledTime);
+            var first = appointments.FirstOrDefault();
+            
+            if (first is null)
+                return result;
+            
+            StringBuilder entry = new();
+            entry.Append($"{first.ScheduledTime.ToShortTimeString()} - ");
+            DateTime lowBorder = first.ScheduledTime.AddMinutes(first.LengthInMins);
+            foreach (var appointment in appointments.Skip(1))
+            {
+                if (appointment.ScheduledTime == lowBorder)
+                {
+                    lowBorder = appointment.ScheduledTime.AddMinutes(appointment.LengthInMins);
+                    continue;
+                }
+
+                entry.Append(lowBorder.ToShortTimeString());
+                result.Add(entry.ToString());
+                entry.Clear();
+                entry.Append($"{appointment.ScheduledTime.ToShortTimeString()} - ");
+                lowBorder = appointment.ScheduledTime.AddMinutes(appointment.LengthInMins);
+            }
+
+            entry.Append(lowBorder.ToShortTimeString());
+            result.Add(entry.ToString());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new ResponseException(StatusCodes.Status500InternalServerError, e.Message);
+        }
+
+        return result;
+    }
+
+    #region Private methods
+
+    private async Task<bool> IsConflicted(Appointment appointment)
+    {
+        var allDoctorAppointmentsForDate = await Search(appointment.DoctorRef,
+            new AppointmentListCriteria { ScheduledTime = appointment.ScheduledTime.ToShortDateString() });
+
+        try
+        {
+            var appointments = allDoctorAppointmentsForDate.Select(pair => pair.Value).SingleOrDefault();
+            
+            if (appointments is null)
+                return false;
+            
+            foreach (var scheduled in appointments)
+            {
+                if (IsInTimeFrame(scheduled, appointment))
+                    return true;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new ResponseException(StatusCodes.Status500InternalServerError, e.Message);
+        }
+
+        return false;
+    }
+
+    private bool IsInTimeFrame(Appointment scheduled, Appointment newAppointment)
+    {
+        if (scheduled.ScheduledTime == newAppointment.ScheduledTime)
+            return true;
+        if (scheduled.ScheduledTime < newAppointment.ScheduledTime
+            && scheduled.ScheduledTime.AddMinutes(scheduled.LengthInMins) > newAppointment.ScheduledTime)
+            return true;
+        if (newAppointment.ScheduledTime < scheduled.ScheduledTime
+            && newAppointment.ScheduledTime.AddMinutes(newAppointment.LengthInMins) > scheduled.ScheduledTime)
+            return true;
+        return false;
+    }
+
+    #endregion
 }

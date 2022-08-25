@@ -16,7 +16,7 @@ public class Patient : UserBase
     public string SentRequestsListKey => $"SentRequests:{Username}";
 
     [BsonIgnore]
-    public IEnumerable<string> SentRequests { get; set; }
+    public IEnumerable<PatientRequestDto> SentRequests { get; set; }
 
     [BsonIgnore]
     public string MyDoctorsListKey => $"Doctors:{Username}";
