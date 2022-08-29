@@ -24,6 +24,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRadioModule } from "@angular/material/radio";
+import { MatStepperModule } from "@angular/material/stepper";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './register/register.component';
@@ -33,6 +34,7 @@ import { TopicComponent } from './topic/topic/topic.component';
 import { AddTopicDialogComponent } from './home/add-topic-dialog/add-topic-dialog.component';
 import { DoctorOverviewComponent } from './doctor-overview/doctor-overview.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { RegisterAppointmentComponent } from './appointments/registerAppointment/register-appointment/register-appointment.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,7 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     AddTopicDialogComponent,
     DoctorOverviewComponent,
     AppointmentsComponent,
+    RegisterAppointmentComponent,
   ],
   imports: [
     BrowserModule,
@@ -70,6 +73,7 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     MatBadgeModule,
     MatTooltipModule,
     MatRadioModule,
+    MatStepperModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,

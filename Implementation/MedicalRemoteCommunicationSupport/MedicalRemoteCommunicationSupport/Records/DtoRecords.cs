@@ -10,3 +10,4 @@ public record struct PatientRequestDto(string Username, string Specialization);
 public record struct MyConnection(string Username, string FullName);
 public record struct RequestRejectionData(string RejectedUsername, string DoctorFullName);
 public record struct FileGuid(string guid);
+public record struct DateStringWrapper(string Date);

@@ -6,7 +6,7 @@ export class Appointment {
     doctor: Doctor;
     patientRef: string;
     patient: Patient;
-    scheduledTime: Date;
+    scheduledTime: string;
     lengthInMins: number;
 
     /**
@@ -20,7 +20,7 @@ export class Appointment {
             this.doctorRef = "";
             this.patient = new Patient();
             this.patientRef = "";
-            this.scheduledTime = new Date();
+            this.scheduledTime = "";
             this.lengthInMins = 0;
             return;
         }
@@ -42,7 +42,7 @@ export class Appointment {
             this.doctorRef = args[0] as string;
             this.patient = new Patient();
             this.patientRef = args[1] as string;
-            this.scheduledTime = args[2] as Date;
+            this.scheduledTime = args[2] as string;
             this.lengthInMins = args[3] as number;
             return;
         }
@@ -51,7 +51,7 @@ export class Appointment {
         this.doctorRef = "";
         this.patient = new Patient();
         this.patientRef = "";
-        this.scheduledTime = new Date();
+        this.scheduledTime = "";
         this.lengthInMins = 0;
     }
 }

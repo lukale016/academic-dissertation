@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>Register topic</h1>
+<div mat-dialog-content class="flexVertical">
+    <mat-stepper [linear]="true" #stepper>
+        <mat-step [completed]="patientSelected" label="Choose a patient">
+            <mat-selection-list #patients [multiple]="false">
+                <mat-list-option (selectedChange)="patientChosen(patient.username)" *ngFor="let patient of user.patients" [value]="patient.username">
+                {{ patient.fullName }}
+                </mat-list-option>
+            </mat-selection-list>
+            <button mat-button matStepperNext>Next</button>
+        </mat-step>
+        <mat-step [completed]="dateSelected" label="Select a appointment date">
+            <mat-form-field appearance="fill">
+                <mat-label>Choose a date</mat-label>
+                <input matInput required (dateChange)="dateChanged()" [(ngModel)]="date" [matDatepicker]="picker">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <div>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button matStepperNext>Next</button>
+            </div>
+        </mat-step>
+        <mat-step label="Pick a time">
+            <div class="flexSpaced fillParent">
+                <div class="flexVertical minFieldWidth">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Scheduled time</mat-label>
+                        <input required [(ngModel)]="time" matInput type="time">
+                    </mat-form-field>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Duration in minutes</mat-label>
+                        <input required [(ngModel)]="duration" matInput type="number" min="0">
+                    </mat-form-field>
+                    <div>
+                        <button mat-button matStepperPrevious>Back</button>
+                    </div>
+                </div>
+                <div class="flexVertical centerContent">
+                    <label><b>Occupied time slots</b></label>
+                    <div *ngIf="occupiedTimeSlots" class="flexVertical">
+                        <label *ngFor="let slot of occupiedTimeSlots">{{ slot }}</label>
+                    </div>
+                </div>
+            </div>
+        </mat-step>
+    </mat-stepper>
+</div>
+<div mat-dialog-actions>
+    <button *ngIf="duration && duration > 0" mat-button color="primary" (click)="registerAppointment()">Register appointment</button>
+    <button mat-button color="warn" (click)="cancel()">Cancel</button>
+</div>

@@ -179,24 +179,25 @@ public class AppointmentRepository : IAppointmentRepository
                 return result;
             
             StringBuilder entry = new();
-            entry.Append($"{first.ScheduledTime.ToShortTimeString()} - ");
-            DateTime lowBorder = first.ScheduledTime.AddMinutes(first.LengthInMins);
+            entry.Append($"{first.ScheduledTime.ToLocalTime().ToString("HH:mm")} - ");
+            DateTime lowBorder = first.ScheduledTime.ToLocalTime().AddMinutes(first.LengthInMins);
             foreach (var appointment in appointments.Skip(1))
             {
-                if (appointment.ScheduledTime == lowBorder)
+                var localTime = appointment.ScheduledTime.ToLocalTime();
+                if (localTime == lowBorder)
                 {
-                    lowBorder = appointment.ScheduledTime.AddMinutes(appointment.LengthInMins);
+                    lowBorder = localTime.AddMinutes(appointment.LengthInMins);
                     continue;
                 }
 
-                entry.Append(lowBorder.ToShortTimeString());
+                entry.Append(lowBorder.ToString("HH:mm"));
                 result.Add(entry.ToString());
                 entry.Clear();
-                entry.Append($"{appointment.ScheduledTime.ToShortTimeString()} - ");
-                lowBorder = appointment.ScheduledTime.AddMinutes(appointment.LengthInMins);
+                entry.Append($"{localTime.ToString("HH:mm")} - ");
+                lowBorder = localTime.AddMinutes(appointment.LengthInMins);
             }
 
-            entry.Append(lowBorder.ToShortTimeString());
+            entry.Append(lowBorder.ToString("HH:mm"));
             result.Add(entry.ToString());
         }
         catch (Exception e)
@@ -239,13 +240,15 @@ public class AppointmentRepository : IAppointmentRepository
 
     private bool IsInTimeFrame(Appointment scheduled, Appointment newAppointment)
     {
-        if (scheduled.ScheduledTime == newAppointment.ScheduledTime)
+        DateTime scheduledDateTime = scheduled.ScheduledTime.ToUniversalTime();
+        DateTime newAppointmentDateTime = newAppointment.ScheduledTime.ToUniversalTime();
+        if (scheduledDateTime == newAppointmentDateTime)
             return true;
-        if (scheduled.ScheduledTime < newAppointment.ScheduledTime
-            && scheduled.ScheduledTime.AddMinutes(scheduled.LengthInMins) > newAppointment.ScheduledTime)
+        if (scheduledDateTime < newAppointmentDateTime
+            && scheduledDateTime.AddMinutes(scheduled.LengthInMins) > newAppointmentDateTime)
             return true;
-        if (newAppointment.ScheduledTime < scheduled.ScheduledTime
-            && newAppointment.ScheduledTime.AddMinutes(newAppointment.LengthInMins) > scheduled.ScheduledTime)
+        if (newAppointmentDateTime < scheduledDateTime
+            && newAppointmentDateTime.AddMinutes(newAppointment.LengthInMins) > scheduledDateTime)
             return true;
         return false;
     }

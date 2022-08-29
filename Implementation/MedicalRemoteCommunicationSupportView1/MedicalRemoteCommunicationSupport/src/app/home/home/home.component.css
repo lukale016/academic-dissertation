@@ -34,6 +34,7 @@ main {
   
 .sidenav {
     min-width: 250px;
+    max-width: 400px;
     padding: 20px;
 }
 

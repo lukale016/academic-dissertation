@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     topic.owner = this.user!.username;
     const dialogRef = this.dialog.open(AddTopicDialogComponent, {
-      width: "600px",
+      width: "800px",
       data: topic
     });
 

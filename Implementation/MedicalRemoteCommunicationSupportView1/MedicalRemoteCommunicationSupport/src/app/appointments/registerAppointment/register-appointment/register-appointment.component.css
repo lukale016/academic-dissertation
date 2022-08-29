@@ -1,0 +1,22 @@
+.flexVertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.flexSpaced {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.centerContent {
+    align-items: center;
+}
+
+.minFieldWidth {
+    min-width: 300px;
+}
+
+.fillParent {
+    width: 100%;
+    height: 100%;
+}

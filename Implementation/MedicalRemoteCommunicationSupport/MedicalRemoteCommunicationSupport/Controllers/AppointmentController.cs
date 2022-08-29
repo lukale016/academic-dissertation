@@ -30,13 +30,13 @@ public class AppointmentController : Controller
         }
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<string>>> OccupiedTimeSlots(string scheduledTime)
+    [HttpPost]
+    public async Task<ActionResult<IEnumerable<string>>> OccupiedTimeSlots([FromBody]DateStringWrapper dto)
     {
         string username = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).SingleOrDefault().Value;
         try
         {
-            return new JsonResult((await unitOfWork.AppointmentRepository.OccupiedTimeSlots(username, scheduledTime)));
+            return new JsonResult((await unitOfWork.AppointmentRepository.OccupiedTimeSlots(username, dto.Date)));
         }
         catch (ResponseException ex)
         {

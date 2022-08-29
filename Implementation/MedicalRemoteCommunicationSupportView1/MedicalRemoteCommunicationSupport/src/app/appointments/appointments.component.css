@@ -28,6 +28,11 @@
     align-items: center;
 }
 
+.fullCenter {
+    align-items: center;
+    justify-content: center;
+}
+
 .control {
     margin-left: 10px;
     border-right: 3px;
@@ -57,7 +62,7 @@
     height: 100%;
 }
 
-.doctorItem {
+.appointmentItem {
     width: 70%;
     margin: 10px;
 }
@@ -97,4 +102,13 @@ button {
 
 .noGrow {
     flex-grow: 0;
+}
+
+.selfVerticalAlign {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.spaceRight {
+    margin-right: auto;
 }
