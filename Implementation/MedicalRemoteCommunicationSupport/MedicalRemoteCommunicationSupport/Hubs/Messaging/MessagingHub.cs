@@ -11,13 +11,13 @@ public class MessagingHub: Hub<IClientMethods>
     private readonly IConnectionManager connectionManager;
     private readonly IHandler<Message, Message> messageHandler;
     private readonly IHandler<string, (DoctorRequestDto request, string specialization)> requestHandler;
-    private readonly IHandler<string, (string patientFullName, MyConnection connection)> requestAcceptedHandler;
+    private readonly IHandler<string, ((string fullName, string skypeId) pattientAdditionalData, MyConnection connection)> requestAcceptedHandler;
     private readonly IHandler<string, RequestRejectionData> requestRejectedHandler;
 
     public MessagingHub(IConnectionManager connectionManager,
         IHandler<Message, Message> messageHandler,
         IHandler<string, (DoctorRequestDto request, string specialization)> requestHandler,
-        IHandler<string, (string patientFullName, MyConnection connection)> requestAcceptedHandler,
+        IHandler<string, ((string fullName, string skypeId) pattientAdditionalData, MyConnection connection)> requestAcceptedHandler,
         IHandler<string, RequestRejectionData> requestRejectedHandler)
     {
         this.connectionManager = connectionManager;
@@ -63,8 +63,10 @@ public class MessagingHub: Hub<IClientMethods>
     {
         var data = await requestAcceptedHandler.Handle(patient, new[] { Context.UserIdentifier });
         if (await connectionManager.GetConnectionId(patient) is string connectionId && connectionId != string.Empty)
-            await Clients.Client(connectionId).RequestFinished(data.connection.Username, data.connection.FullName);
-        await Clients.Caller.RequestAccepted(patient, data.patientFullName);
+            await Clients.Client(connectionId).RequestFinished(data.connection.Username, data.connection.FullName,
+                data.connection.SkypeId);
+        await Clients.Caller.RequestAccepted(patient, data.pattientAdditionalData.fullName,
+            data.pattientAdditionalData.skypeId);
     }
 
     [HubMethodName("rejectRequest")]

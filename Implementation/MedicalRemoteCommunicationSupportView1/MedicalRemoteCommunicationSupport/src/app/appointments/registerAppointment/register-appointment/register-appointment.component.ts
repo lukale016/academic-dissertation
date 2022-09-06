@@ -63,7 +63,7 @@ export class RegisterAppointmentComponent implements OnInit, OnDestroy {
   dateChanged() {
     this.dateSelected = true;
     if(this.luxonDate)
-      this.appointmentServce.getOccupiedTimeSlots(this.luxonDate.toFormat("M/dd/yyyy")).pipe(first())
+      this.appointmentServce.getOccupiedTimeSlots(this.luxonDate.toFormat("M/d/yyyy")).pipe(first())
         .subscribe((occupied: string[]) => this.occupiedTimeSlots = occupied);
   }
 
@@ -109,5 +109,9 @@ export class RegisterAppointmentComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  getMinDate(): Date {
+    return new Date();
   }
 }

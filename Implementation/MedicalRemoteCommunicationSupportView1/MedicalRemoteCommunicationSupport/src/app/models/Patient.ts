@@ -15,7 +15,7 @@ export class Patient {
     messageListPriority: string[];
     createdTopics: Topic[];
     sentRequests: {username: string, specialization: string}[]
-    myDoctors: {username: string, fullName: string}[];
+    myDoctors: {username: string, fullName: string, skypeId: string}[];
 
     /**
      * @summary One arg copy ctor

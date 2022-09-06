@@ -21,8 +21,8 @@ export class SuperUser {
     createdTopics: Topic[];
     sentRequests: {username: string, specialization: string}[];
     requests: {username: string, fullName: string}[];
-    patients: {username: string, fullName: string}[];
-    myDoctors: {username: string, fullName: string}[];
+    patients: {username: string, fullName: string, skypeId: string}[];
+    myDoctors: {username: string, fullName: string, skypeId: string}[];
 
     constructor(user: Patient | Doctor | null)
     {

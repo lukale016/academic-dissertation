@@ -28,7 +28,7 @@ public class Patient : UserBase
     {
         Username = dto.Username;
         Password = dto.Password;
-        Email = dto.Email;
+        SkypeId = dto.SkypeId;
         Name = dto.Name;
         MiddleName = dto.MiddleName;
         Surname = dto.Surname;

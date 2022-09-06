@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace MedicalRemoteCommunicationSupport.Handlers;
 
-public class RequestAcceptedHandler : IHandler<string, (string patientFullName, MyConnection connection)>
+public class RequestAcceptedHandler : IHandler<string, ((string fullName, string skypeId) pattientAdditionalData, MyConnection connection)>
 {
     private readonly ConnectionMultiplexer redis;
     private readonly UnitOfWork unitOfWork;
@@ -15,7 +15,7 @@ public class RequestAcceptedHandler : IHandler<string, (string patientFullName, 
         this.unitOfWork = unit;
     }
 
-    public async Task<(string patientFullName, MyConnection connection)> Handle(string handled, params object[] additionalParams)
+    public async Task<((string fullName, string skypeId) pattientAdditionalData, MyConnection connection)> Handle(string handled, params object[] additionalParams)
     {
         Guard.Against.NullOrEmpty(handled, nameof(handled));
         Guard.Against.NullOrEmpty<object>(additionalParams, nameof(additionalParams));
@@ -28,8 +28,10 @@ public class RequestAcceptedHandler : IHandler<string, (string patientFullName, 
 
         IDatabase db = redis.GetDatabase();
 
-        var patientConnection = new MyConnection { Username = doctor.Username, FullName = doctor.FullName };
-        var doctorConnection = new MyConnection { Username = patient.Username, FullName = patient.FullName };
+        var patientConnection = new MyConnection
+            { Username = doctor.Username, FullName = doctor.FullName, SkypeId = doctor.SkypeId };
+        var doctorConnection = new MyConnection
+            { Username = patient.Username, FullName = patient.FullName, SkypeId = patient.SkypeId };
 
         await db.ListLeftPushAsync(doctor.PatientListKey,
             JsonSerializer.Serialize<MyConnection>(doctorConnection));
@@ -42,6 +44,6 @@ public class RequestAcceptedHandler : IHandler<string, (string patientFullName, 
         await db.ListRemoveAsync(doctor.RequestListKey, JsonSerializer.Serialize<DoctorRequestDto>(
             new DoctorRequestDto { Username = patient.Username, FullName = patient.FullName }));
 
-        return (patient.FullName, patientConnection);
+        return ((patient.FullName, patient.SkypeId), patientConnection);
     }
 }

@@ -16,7 +16,7 @@ public abstract class UserBase
     public string Password { get; set; }
 
     [DataMember]
-    public string Email { get; set; }
+    public string SkypeId { get; set; }
 
     [DataMember]
     public string Name { get; set; }

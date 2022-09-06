@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Ardalis.GuardClauses;
 using MedicalRemoteCommunicationSupport.Filtering;
 using MedicalRemoteCommunicationSupport.Helpers;
@@ -49,6 +50,8 @@ public class AppointmentRepository : IAppointmentRepository
         List<string> dates = (await db.ListRangeAsync(user.AppointmentDatesListKey))
                                       .Select(rv => rv.ToString())
                                       .ToList();
+
+        dates = await RemovePassedDates(dates, user);
         
         foreach (string date in dates)
         {
@@ -60,6 +63,49 @@ public class AppointmentRepository : IAppointmentRepository
         }
 
         return result;
+    }
+
+    private async Task<List<string>> RemovePassedDates(List<string> dates, UserBase user)
+    {
+        Guard.Against.Null(dates);
+
+        foreach (var dateAsString in dates)
+        {
+            DateTime? date = null;
+            try
+            {
+                date = DateTime.ParseExact(dateAsString, "M/d/yyyy", CultureInfo.CurrentCulture);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
+            if(!date.HasValue)
+                continue;
+
+            if (date.Value.ToUniversalTime() < DateTime.UtcNow)
+            {
+                dates.Remove(dateAsString);
+                await RemovePassedDate(dateAsString, user);
+            }
+        }
+
+        return dates;
+    }
+
+    private async Task RemovePassedDate(string dateAsString, UserBase user)
+    {
+        Guard.Against.NullOrEmpty(dateAsString);
+        Guard.Against.Null(user);
+        
+        IDatabase db = redis.GetDatabase();
+        if (user is Doctor doctor)
+        {
+            await db.ListRemoveAsync(doctor.AppointmentDatesListKey, dateAsString);
+            return;
+        }
+        await db.ListRemoveAsync(((Patient)user).AppointmentDatesListKey, dateAsString);
     }
 
     public async Task<Appointment> RegisterAppointment(AppointmentPostDto dto)

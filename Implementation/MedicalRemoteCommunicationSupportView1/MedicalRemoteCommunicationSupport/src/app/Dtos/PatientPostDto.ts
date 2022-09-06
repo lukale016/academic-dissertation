@@ -2,7 +2,7 @@ import { DoctroPostDto } from './DoctorPostDto';
 export class PatientPostDto {
     username: string = '';
     password: string = '';
-    email: string = '';
+    skypeId: string = '';
     name: string = '';
     middleName: string = '';
     surname: string = '';
@@ -12,7 +12,7 @@ export class PatientPostDto {
     constructor(docDto: DoctroPostDto) {
         this.username = docDto.username;
         this.password = docDto.password;
-        this.email = docDto.email;
+        this.skypeId = docDto.skypeId;
         this.name = docDto.name;
         this.middleName = docDto.middleName;
         this.surname = docDto.surname;

@@ -44,6 +44,13 @@ class="shortenSize"
             </div>
         </div>
         <div class="flex centerContent">
+            <button 
+                mat-icon-button 
+                matTooltip="Start a skype call(requires installed skype client)"
+                matTooltipPosition="left" 
+                (click)="skypeCall()">
+                <mat-icon color="primary">video_call</mat-icon>
+            </button>
             <button mat-icon-button (click)="fileUpload.click()"><mat-icon color="primary">attach_file</mat-icon></button>
             <input #fileUpload class="fileInput" (change)="onFileSelected($event)" type="file" />
             <mat-form-field class="fillParentWidth">

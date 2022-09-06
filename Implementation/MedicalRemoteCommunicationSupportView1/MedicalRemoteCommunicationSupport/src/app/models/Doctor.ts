@@ -16,7 +16,7 @@ export class Doctor {
     startTime: string;
     endTime: string;
     requests: {username: string, fullName: string}[];
-    patients: {username: string, fullName: string}[];
+    patients: {username: string, fullName: string, skypeId: string}[];
 
     /**
      * @summary One arg copy ctor

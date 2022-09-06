@@ -35,7 +35,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   register() {
-    let modelFilled: boolean = this.isDoctor ? ModelValidator.validate(this.data) : ModelValidator.validate(this.data, ["specialization"]);
+    let modelFilled: boolean = this.isDoctor ? ModelValidator.validate(this.data, ["skypeId"]) : ModelValidator.validate(this.data, ["specialization", "skypeId"]);
     if(!modelFilled) {
       this.snack.open("Fill all required fields", "close", { duration: 2000});
       return;

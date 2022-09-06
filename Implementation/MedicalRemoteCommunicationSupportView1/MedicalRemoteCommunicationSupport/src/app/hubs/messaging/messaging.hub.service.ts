@@ -70,20 +70,20 @@ export class MessagingHubService implements OnDestroy {
       this.userContainer.user.next(this.user);
     });
 
-    this.connection?.on("requestFinished", (doctor: string, fullName: string) => {
+    this.connection?.on("requestFinished", (doctor: string, fullName: string, skypeId: string) => {
       if(!this.user)
         return;
       this.user.sentRequests = this.user.sentRequests.filter(req => req.username != doctor);
-      this.user.patients.push({ username: doctor, fullName });
+      this.user.patients.push({ username: doctor, fullName, skypeId });
       this.userContainer.user.next(this.user);
       this.snack.open(`${fullName} accepted you as his patient.`, "ok", { duration: 2000 });
     });
 
-    this.connection?.on("requestAccepted", (patient: string, fullName: string) => {
+    this.connection?.on("requestAccepted", (patient: string, fullName: string, skypeId: string) => {
       if(!this.user)
         return;
       this.user.requests = this.user.requests.filter(req => req.username != patient);
-      this.user.myDoctors.push({ username: patient, fullName });
+      this.user.myDoctors.push({ username: patient, fullName, skypeId });
       this.userContainer.user.next(this.user);
     });
 

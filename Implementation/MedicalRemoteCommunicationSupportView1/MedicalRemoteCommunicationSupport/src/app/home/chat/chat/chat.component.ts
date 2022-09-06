@@ -22,6 +22,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private fileMessagePrefix: string = "file:";
   @Input() user!: SuperUser;
   @Input() chatUsername!: string;
+  @Input() skypeId!: string;
   @Input() chatTitle!: string;
   @Output() notificationEvent = new EventEmitter(); 
 
@@ -119,8 +120,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   formatTimeSent(timestamp: DateTime): string {
-
     return `${timestamp.hour}:${timestamp.minute}`;
+  }
+
+  skypeCall() {
+    window.open(`skype:${this.skypeId}?call`);
   }
 
   ngOnDestroy(): void {
