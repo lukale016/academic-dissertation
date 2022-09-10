@@ -27,16 +27,18 @@ public class MessagingHub: Hub<IClientMethods>
         this.requestRejectedHandler = requestRejectedHandler;
     }
 
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
-        connectionManager.RegisterConnection(Context.UserIdentifier, Context.ConnectionId);
-        return base.OnConnectedAsync();
+        await connectionManager.RegisterConnection(Context.UserIdentifier, Context.ConnectionId);
+        Console.WriteLine($"{Context.UserIdentifier} has connected.");
+        await base.OnConnectedAsync();
     }
 
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        connectionManager.RemoveConnection(Context.UserIdentifier);
-        return base.OnDisconnectedAsync(exception);
+        await connectionManager.RemoveConnection(Context.UserIdentifier);
+        Console.WriteLine($"{Context.UserIdentifier} has disconnected.");
+        await base.OnDisconnectedAsync(exception);
     }
 
     [HubMethodName("sendMessage")]

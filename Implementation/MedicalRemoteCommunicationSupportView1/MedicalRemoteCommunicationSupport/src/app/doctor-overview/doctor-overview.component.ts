@@ -66,8 +66,8 @@ export class DoctorOverviewComponent implements OnInit, OnDestroy {
     this.userService.logout();
   }
 
-  sendRequest(doctor: string) {
-    this.messageHub.sendRequest(doctor);
+  async sendRequest(doctor: string) {
+    await this.messageHub.sendRequest(doctor);
   }
 
   alreadySentOrAccepted(doctor: string, specialization: string): boolean {
@@ -85,12 +85,12 @@ export class DoctorOverviewComponent implements OnInit, OnDestroy {
     this.showBadge = true;
   }
 
-  acceptRequest(patient: string) {
-    this.messageHub.acceptRequest(patient);
+  async acceptRequest(patient: string) {
+    await this.messageHub.acceptRequest(patient);
   }
   
-  rejectRequest(patient: string) {
-    this.messageHub.rejectRequest(patient);
+  async rejectRequest(patient: string) {
+    await this.messageHub.rejectRequest(patient);
   }
 
   openChats() {

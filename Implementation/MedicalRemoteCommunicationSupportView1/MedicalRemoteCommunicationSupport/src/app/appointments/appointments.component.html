@@ -64,7 +64,7 @@
       </mat-toolbar>
     </p>
     <main class="flex fillParent">
-        <div class="flexVertical centerContent control fillParent">
+        <div class="flexVertical centerContent control fillParent overflow">
             <h2 class="controlItem">Filters</h2>
             <mat-form-field *ngIf="user?.isDoctor">
                 <input matInput placeholder="Patient" [(ngModel)]="criteriaBind.patient" appearance="fill" />
@@ -120,6 +120,7 @@
             <app-chat *ngFor="let chat of user.myDoctors"
             [chatUsername]="chat.username"
             [chatTitle]="chat.fullName"
+            [skypeId]="chat.skypeId"
             [user]="user"
             (notificationEvent)="messageArrived()"></app-chat>
           </ng-container>
@@ -127,6 +128,7 @@
             <app-chat *ngFor="let chat of user.patients"
             [chatUsername]="chat.username"
             [chatTitle]="chat.fullName"
+            [skypeId]="chat.skypeId"
             [user]="user"
             (notificationEvent)="messageArrived()"></app-chat>
           </ng-container>

@@ -43,21 +43,21 @@ export class UserService implements OnDestroy {
   {
     this.authService.login(creds).pipe(takeUntil(this.$destroy))
       .subscribe({
-      next: (data : any) => {
+      next: async (data : any) => {
         if(data.isDoctor == undefined)
         {
           this.userContainer.user.next(undefined);
-          this.messagingHub.Disconnect();
+          await this.messagingHub.Disconnect();
         }
         else if(data.isDoctor) {
           this.userContainer.user.next(new SuperUser(data as Doctor));
           this.isDoctor.next(true);
-          this.messagingHub.Connect();
+          await this.messagingHub.Connect();
         }
         else {
           this.userContainer.user.next(new SuperUser(data as Patient));
           this.isDoctor.next(false);
-          this.messagingHub.Connect();
+          await this.messagingHub.Connect();
         }
         this.router.navigate([""]);
       },
@@ -70,28 +70,28 @@ export class UserService implements OnDestroy {
   loadUserByToken() {
     this.authService.loginUserWithToken().pipe(takeUntil(this.$destroy))
       .subscribe({
-        next: (data) => {
+        next: async (data) => {
           if(data.isDoctor == undefined)
           {
             this.userContainer.user.next(undefined);
-            this.messagingHub.Disconnect();
+            await this.messagingHub.Disconnect();
           }
           else if(data.isDoctor) {
             this.userContainer.user.next(new SuperUser(data as Doctor));
             this.isDoctor.next(true);
-            this.messagingHub.Connect();
+            await this.messagingHub.Connect();
           }
           else {
             this.userContainer.user.next(new SuperUser(data as Patient));
             this.isDoctor.next(false);
-            this.messagingHub.Connect();
+            await this.messagingHub.Connect();
           }
         },
-        error: (error: HttpErrorResponse) => {
+        error: async (error: HttpErrorResponse) => {
           if(error.status === 401)
           {
             localStorage.removeItem(tokenKey);
-            this.messagingHub.Disconnect();
+            await this.messagingHub.Disconnect();
             return;
           }
         }
@@ -143,9 +143,10 @@ export class UserService implements OnDestroy {
     return this.client.post<Patient[]>(`${this.rootRoute}SearchPatients`, criteria, { headers: this.getDefaultHeaders() });
   }
 
-  logout() {
+  async logout() {
     localStorage.removeItem(tokenKey);
     this.userContainer.user.next(undefined);
+    await this.messagingHub.Disconnect();
     this.router.navigate([""]);
   }
 

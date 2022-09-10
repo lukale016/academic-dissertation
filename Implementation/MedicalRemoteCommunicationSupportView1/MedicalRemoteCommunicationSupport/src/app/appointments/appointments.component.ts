@@ -68,12 +68,12 @@ export class AppointmentsComponent implements OnInit,OnDestroy {
     this.userService.logout();
   }
 
-  acceptRequest(patient: string) {
-    this.messageHub.acceptRequest(patient);
+  async acceptRequest(patient: string) {
+    await this.messageHub.acceptRequest(patient);
   }
   
-  rejectRequest(patient: string) {
-    this.messageHub.rejectRequest(patient);
+  async rejectRequest(patient: string) {
+    await this.messageHub.rejectRequest(patient);
   }
 
   applyFilters() {

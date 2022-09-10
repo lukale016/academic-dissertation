@@ -72,7 +72,10 @@ export class TopicComponent implements OnInit, OnDestroy {
       this.commentService.addComment(this.comment, this.topic!.id)
         .pipe(takeUntil(this.$destroy))
         .subscribe({
-           next:  (comment: Comment) => this.topic!.comments.unshift(comment),
+           next:  (comment: Comment) => {
+            this.topic!.comments.unshift(comment);
+            this.comment.description = "";
+           },
            error: (error: HttpErrorResponse) => this.snack.open(error.error, "close", { duration: 2000 })
         });
     }

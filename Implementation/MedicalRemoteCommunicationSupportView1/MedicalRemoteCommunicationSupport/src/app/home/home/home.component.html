@@ -124,6 +124,7 @@
         <app-chat *ngFor="let chat of user.myDoctors"
         [chatUsername]="chat.username"
         [chatTitle]="chat.fullName"
+        [skypeId]="chat.skypeId"
         [user]="user"
         (notificationEvent)="messageArrived()"></app-chat>
       </ng-container>
@@ -131,6 +132,7 @@
         <app-chat *ngFor="let chat of user.patients"
         [chatUsername]="chat.username"
         [chatTitle]="chat.fullName"
+        [skypeId]="chat.skypeId"
         [user]="user"
         (notificationEvent)="messageArrived()"></app-chat>
       </ng-container>

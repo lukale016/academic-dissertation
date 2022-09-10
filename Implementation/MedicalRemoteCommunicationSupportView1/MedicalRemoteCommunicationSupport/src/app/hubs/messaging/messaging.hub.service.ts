@@ -2,13 +2,12 @@ import { UserContainerService } from './../../container/userContainer/user-conta
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SuperUser } from './../../models/SuperUser';
 import { tokenKey } from './../../constants/localStorageConsts';
-import { Subject, Observable, first, takeUntil } from 'rxjs';
+import { Subject, Observable, takeUntil } from 'rxjs';
 import { environment } from './../../../environments/environment';
 import { Injectable, OnDestroy } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions, IHubProtocol, LogLevel } from '@microsoft/signalr';
 import { Message } from 'src/app/Dtos/Message';
 import * as signalR from '@microsoft/signalr';
-import { DateTime } from 'luxon'
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +27,7 @@ export class MessagingHubService implements OnDestroy {
    }
   
 
-  Connect() {
+  async Connect() {
     const options: IHttpConnectionOptions = {
       accessTokenFactory: () => {
         let token = localStorage.getItem(tokenKey);
@@ -45,7 +44,7 @@ export class MessagingHubService implements OnDestroy {
                                                 .withAutomaticReconnect()
                                                 .build();
     this.registerListeners();
-    this.connection.start()
+    await this.connection.start()
   }
 
   private registerListeners() {
@@ -103,36 +102,37 @@ export class MessagingHubService implements OnDestroy {
     });
   }
 
-  Disconnect() {
-    this.connection?.stop();
+  async Disconnect() {
+    await this.connection?.stop();
   }
 
-  sendMessage(receiver: string, content: string) {
+  async sendMessage(receiver: string, content: string) {
     if(this.connection?.state === signalR.HubConnectionState.Disconnected)
-      this.connection.start();
+      await this.connection.start();
     this.connection?.send("sendMessage", receiver, content);
   }
 
-  sendRequest(doctor: string) {
+  async sendRequest(doctor: string) {
     if(this.connection?.state === signalR.HubConnectionState.Disconnected)
-      this.connection.start();
+      await this.connection.start();
     this.connection?.send("sendRequest", doctor);
   }  
 
-  acceptRequest(patient: string){
+  async acceptRequest(patient: string){
     if(this.connection?.state === signalR.HubConnectionState.Disconnected)
-      this.connection.start();
+      await this.connection.start();
     this.connection?.send("acceptRequest", patient);
   }
 
-  rejectRequest(patient: string) {
+  async rejectRequest(patient: string) {
     if(this.connection?.state === signalR.HubConnectionState.Disconnected)
-      this.connection.start();
+      await this.connection.start();
     this.connection?.send("rejectRequest", patient);
   }
   
   ngOnDestroy(): void {
     this.$destroy.next();
     this.$destroy.complete();
+    this.Disconnect();
   }
 }

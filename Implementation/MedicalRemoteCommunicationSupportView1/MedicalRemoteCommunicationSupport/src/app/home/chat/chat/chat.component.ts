@@ -66,10 +66,10 @@ export class ChatComponent implements OnInit, OnDestroy {
         });
   }
 
-  sendMessage() {
+  async sendMessage() {
     if(!this.messageContent || this.messageContent === "")
       return;
-    this.messagingHub.sendMessage(this.chatUsername, this.messageContent);
+    await this.messagingHub.sendMessage(this.chatUsername, this.messageContent);
     this.messageContent = "";
   }
 
@@ -110,9 +110,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     let data: FormData = new FormData();
     data.append("file", file, file.name);
     this.fileService.uploadFile(data).pipe(takeUntil(this.$destroy)).subscribe({
-      next: (fileGuid: FileGuid) => {
+      next: async (fileGuid: FileGuid) => {
         if(fileGuid.guid)
-          this.messagingHub.sendMessage(this.chatUsername, `${this.fileMessagePrefix}${file.name}:${this.fileService.getFileUrl(fileGuid.guid)}`);
+          await this.messagingHub.sendMessage(this.chatUsername, `${this.fileMessagePrefix}${file.name}:${this.fileService.getFileUrl(fileGuid.guid)}`);
       },
       error: (error: HttpErrorResponse) => this.snack.open(error.message, "close", { duration: 2000 })
     });
